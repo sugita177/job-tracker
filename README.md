@@ -45,10 +45,12 @@ Laravel標準の利便性（FormRequest, Resource, Policy）を活かしつつ�
 
 ---
 
-## 3. 設計ドキュメント (`docs/`)
+## 3. 設計・環境構築ドキュメント (`docs/`)
 
-開発着手前に作成した詳細な設計書を公開しています。
+開発着手前に作成した詳細な設計書およびセットアップ手順書を公開しています。
 
+- [00. 開発環境セットアップガイド (Development Setup Guide)](docs/00_setup_guide.md)
+  - 前提環境（OrbStack, Node.js）、初期構築ログ、クローン後の再現手順
 - [01. 要件定義書 (Requirements Specification)](docs/01_requirements.md)
   - ペルソナ、応募前から結果までの業務フロー、MVPスコープ定義
 - [02. ドメインモデル設計 (Domain Model & Ubiquitous Language)](docs/02_domain_model.md)
@@ -71,26 +73,29 @@ Laravel標準の利便性（FormRequest, Resource, Policy）を活かしつつ�
 ```text
 job-tracker/
 ├── Makefile                    # 統合開発コマンド (make dev, make test 等)
-├── docs/                       # 設計ドキュメント・ADR群
+├── docs/                       # 設計ドキュメント・環境構築ガイド・ADR群
 ├── backend/                    # Laravel 13 API (Laravel Sail / Docker)
 └── frontend/                   # React + TypeScript SPA (Vite)
 ```
 
 ---
 
-## 5. ローカル開発環境の起動方法 (準備中)
+## 5. ローカル開発環境の起動方法
+
+詳細な手順や前提ツールの導入は [00. 開発環境セットアップガイド](docs/00_setup_guide.md) をご覧ください。
 
 ```bash
-# リポジトリのクローン
+# 1. リポジトリのクローン
 git clone <repository-url>
 cd job-tracker
 
-# 開発環境の起動 (バックエンド + フロントエンド)
+# 2. 開発環境の起動 (バックエンド + フロントエンド)
 make dev
 
-# バックエンドテストの実行 (Pest)
+# 3. バックエンドテストの実行 (Pest)
 make test
 ```
+
 
 ---
 
