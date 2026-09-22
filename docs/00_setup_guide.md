@@ -28,7 +28,7 @@
 git init
 ```
 
-### 2.2 バックエンド初期化 (Laravel 13 + Sail)
+### 2.2 バックエンド初期化 (Laravel 13 + Sail + Pest)
 ```bash
 # Docker (OrbStack) が起動していることを確認
 docker info
@@ -38,6 +38,23 @@ curl -s "https://laravel.build/backend?with=mysql,mailpit" | bash
 
 # 子リポジトリの.gitが作られた場合は削除してルートGitに統合 (念のため確認)
 rm -rf backend/.git
+
+# Sail コンテナの起動
+cd backend
+./vendor/bin/sail up -d
+
+# 初回DBマイグレーションの実行
+./vendor/bin/sail artisan migrate
+
+# Pest PHP および Laravel プラグインのインストール
+./vendor/bin/sail composer require pestphp/pest pestphp/pest-plugin-laravel --dev --with-all-dependencies
+
+# Pest の初期化 (tests/Pest.php の生成)
+./vendor/bin/sail pest --init
+
+# テスト実行確認
+./vendor/bin/sail pest
+cd ..
 ```
 
 ### 2.3 フロントエンド初期化 (React + Vite + TypeScript)
