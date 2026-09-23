@@ -105,3 +105,26 @@ PHPにおいて、`==` や `!=`（緩やかな比較）は暗黙の型変換を�
 - 暗黙の型変換に頼らず、常に **厳格な比較（`!==` / `===`）** を使用する。
 - または、null チェックと空文字チェックを明確なガード節（`if-else`）に分離し、PHPStan にコードの意図を明示的に伝える。
 
+---
+
+## 6. PHP 8.4+ 非対称可視性 (`public private(set)`) によるカプセル化
+
+### 背景
+エンティティ `SelectionStep` のプロパティ（`$result`, `$reviewMemo` 等）を `public` にすると、外部から `$step->result = ...` と直接代入され、`recordReview()` のバリデーション（トリム処理等）を経由せずに改ざんされる危険性（カプセル化の破綻）があった。
+
+### 従来の課題（PHP 8.3 以前）
+カプセル化を守るためには、プロパティを `private` にした上で、参照用のゲッター（`public function getResult(): StepResult`）を大量に定義する必要があり、コードがボイラープレートで肥大化していた。
+
+### PHP 8.4+ での解決
+PHP 8.4 で導入された **非対称可視性（Asymmetric Visibility: `public private(set)`）** を採用。
+
+```php
+public private(set) ?string $reviewMemo = null,
+public private(set) StepResult $result = StepResult::PENDING,
+```
+
+- **読み取り（Read）**: 外部から `$step->result` とシンプルかつ直感的に直接参照可能（ゲッター不要）。
+- **書き込み（Write）**: 外部からの代入（`$step->result = ...`）は **PHPコンパイラ（言語エンジン）が構文エラーとして弾く**。
+- 変更は必ずクラス内の振る舞いメソッド（`recordReview()` 等）を経由することが強制され、**ボイラープレートゼロで完全なカプセル化** を実現できた。
+
+
