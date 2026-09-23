@@ -88,3 +88,20 @@ PHPの標準例外（SPL: Standard PHP Library）の階層構造：
 - 初期状態の解析で、Pestのサンプル関数 `something()` に対して `missingType.return`（戻り値型の未指定）が検出された。
 - Level 8 では、通常の業務コードだけでなく、テストコードやヘルパー関数であっても **「引数型・戻り値型の完全指定」** が強制される。
 - これを初期からパスさせ続けることで、ドメインモデル全体の型安全性が強固に保証される。
+
+---
+
+## 5. 緩やかな比較 (Loose Comparison `!=` / `==`) の排除と PHPStan の型推論
+
+### 事象
+`ApplicationChannel` のコンストラクタで、文字列トリム後の空文字判定に `!= null && != ''` を使用した際、PHPStan Level 8 から `Loose comparison using != between non-empty-string and '' will always evaluate to true. (notEqual.alwaysTrue)` という指摘を受けた。
+
+### 原因と技術的背景
+PHPにおいて、`==` や `!=`（緩やかな比較）は暗黙の型変換を伴う。
+- 例えば、文字列 `"0"` はブール変換で `false` 扱いになり、数値比較や空文字比較で予期せぬ挙動を引き起こす「型ジャグリング（Type Juggling）」の温床となる。
+- PHPStan は変数の型を `?string` から「null ではない文字列（`non-empty-string` または `string`）」へと型絞り込み（Type Narrowing）を行っている最中に、緩やかな比較が混ざると論理的な矛盾や潜在的バグとして検知する。
+
+### 解決策とベストプラクティス
+- 暗黙の型変換に頼らず、常に **厳格な比較（`!==` / `===`）** を使用する。
+- または、null チェックと空文字チェックを明確なガード節（`if-else`）に分離し、PHPStan にコードの意図を明示的に伝える。
+
