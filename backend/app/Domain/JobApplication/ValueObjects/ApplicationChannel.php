@@ -17,6 +17,16 @@ final class ApplicationChannel
         $this->detailName = ($trimmed !== null && $trimmed !== '') ? $trimmed : null;
     }
 
+    public static function direct(): self
+    {
+        return new self(ChannelType::DIRECT);
+    }
+
+    public static function agent(?string $agentName = null): self
+    {
+        return new self(ChannelType::AGENT, $agentName);
+    }
+
     /**
      * 値オブジェクトの等価性（同一プロパティを持つか）を検証する
      */

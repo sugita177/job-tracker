@@ -36,25 +36,25 @@ Laravel標準のActiveRecord（Eloquent）は高速な開発を可能にする�
 
 ```mermaid
 graph TB
-    subgraph Presentation [1. プレゼンテーション層 (Presentation Layer)]
+    subgraph Presentation ["1. プレゼンテーション層 (Presentation Layer)"]
         Controller["Controller<br>(HTTPリクエストハンドリング)"]
         FormRequest["FormRequest<br>(入力バリデーション)"]
         Resource["JsonResource<br>(APIレスポンス変換)"]
     end
 
-    subgraph Application [2. アプリケーション層 (Application Layer)]
+    subgraph Application ["2. アプリケーション層 (Application Layer)"]
         UseCase["UseCase / Application Service<br>(業務ユースケースの調整・トランザクション制御)"]
         DTO["Data Transfer Object (DTO)<br>(レイヤー間の型安全なデータ受け渡し)"]
     end
 
-    subgraph Domain [3. ドメイン層 (Domain Layer - 純粋PHP)]
+    subgraph Domain ["3. ドメイン層 (Domain Layer - 純粋PHP)"]
         Entity["Domain Entity / Aggregate Root<br>(JobApplication, SelectionStep)"]
         VO["Value Object / Enum<br>(ApplicationStatus, ApplicationChannel, Priority)"]
         DomainException["Domain Exception<br>(ビジネスルール違反の例外)"]
         RepoInterface["Repository Interface<br>(データアクセスの抽象)"]
     end
 
-    subgraph Infrastructure [4. インフラストラクチャ層 (Infrastructure Layer)]
+    subgraph Infrastructure ["4. インフラストラクチャ層 (Infrastructure Layer)"]
         EloquentModel["Eloquent Model<br>(DBテーブルとの1対1マッピング)"]
         RepoImpl["Repository Implementation<br>(Eloquentを用いた永続化・ドメイン相互変換)"]
     end

@@ -3,6 +3,21 @@
 use App\Domain\JobApplication\ValueObjects\ApplicationStatus;
 use App\Domain\JobApplication\Exceptions\InvalidStatusTransitionException;
 
+it('returns correct label for each status', function (ApplicationStatus $status, string $expectedLabel) {
+    expect($status->getLabel())->toBe($expectedLabel);
+})->with([
+    '検討中'         => [ApplicationStatus::INTERESTED, '検討中'],
+    'カジュアル面談中' => [ApplicationStatus::CASUAL_INTERVIEW, 'カジュアル面談中'],
+    '書類選考中'      => [ApplicationStatus::DOCUMENT_SCREENING, '書類選考中'],
+    '面接日程調整中'   => [ApplicationStatus::INTERVIEW_ADJUSTING, '面接日程調整中'],
+    '面接進行中'      => [ApplicationStatus::INTERVIEW_IN_PROGRESS, '面接進行中'],
+    '内定'           => [ApplicationStatus::OFFERED, '内定'],
+    '内定承諾'       => [ApplicationStatus::ACCEPTED, '内定承諾'],
+    'お見送り'       => [ApplicationStatus::REJECTED, 'お見送り'],
+    '辞退'           => [ApplicationStatus::WITHDRAWN, '辞退'],
+    '検討見送り'     => [ApplicationStatus::SKIPPED, '検討見送り'],
+]);
+
 // 正常系: 許可された順遷移のマトリクステスト
 it('allows valid normal transitions', function (ApplicationStatus $from, ApplicationStatus $to) {
     expect($from->canTransitionTo($to))->toBeTrue();

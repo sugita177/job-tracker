@@ -19,6 +19,23 @@ enum ApplicationStatus: string
     case WITHDRAWN = 'WITHDRAWN';
     case SKIPPED = 'SKIPPED';
 
+        public function getLabel(): string
+    {
+        return match ($this) {
+            self::INTERESTED => '検討中',
+            self::CASUAL_INTERVIEW => 'カジュアル面談中',
+            self::DOCUMENT_SCREENING => '書類選考中',
+            self::INTERVIEW_ADJUSTING => '面接日程調整中',
+            self::INTERVIEW_IN_PROGRESS => '面接進行中',
+            self::OFFERED => '内定',
+            self::ACCEPTED => '内定承諾',
+            self::REJECTED => 'お見送り',
+            self::WITHDRAWN => '辞退',
+            self::SKIPPED => '検討見送り',
+        };
+    }
+
+
     /**
      * 次のステータスへ通常遷移可能かを判定する
      */

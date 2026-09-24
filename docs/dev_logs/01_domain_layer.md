@@ -127,4 +127,74 @@ public private(set) StepResult $result = StepResult::PENDING,
 - **書き込み（Write）**: 外部からの代入（`$step->result = ...`）は **PHPコンパイラ（言語エンジン）が構文エラーとして弾く**。
 - 変更は必ずクラス内の振る舞いメソッド（`recordReview()` 等）を経由することが強制され、**ボイラープレートゼロで完全なカプセル化** を実現できた。
 
+---
+
+## 7. Pest データセット (`with()`) における引数マッピング仕様と `DatasetArgumentsMismatch`
+
+### 現象
+Pest の `with()` を使ったパラメタライズドテストで、テスト関数側が2つの引数を期待しているにもかかわらず以下のエラーが発生した。
+
+```text
+FAILED Tests\Unit\Domain\JobApplication\ApplicationStatusTest > it returns correct label for each status
+DatasetArgumentsMismatch: Test expects 2 arguments but dataset only provides 1
+```
+
+### 原因
+データセットを以下のように連想配列で定義していた：
+
+```php
+it('returns correct label for each status', function (ApplicationStatus $status, string $expectedLabel) {
+    expect($status->getLabel())->toBe($expectedLabel);
+})->with([
+    ApplicationStatus::INTERESTED->getLabel() => '検討中',
+    ...
+]);
+```
+
+Pest において、**連想配列の「キー」はテスト結果のレポートに表示されるテスト名（ラベル）** として扱われ、**テスト関数の引数には「値」のみが渡される**。
+上記の場合、値は `'検討中'` という単一の文字列であるため、テスト関数の第1引数に文字列が渡され、第2引数が不足して引数不一致エラーとなった。
+
+### 解決策
+テスト関数が複数の引数を受け取る場合は、各データ要素を **タプル（配列）** の形式で渡す必要がある。
+名前付きデータセットにする場合も、値側を配列にする。
+
+```php
+it('returns correct label for each status', function (ApplicationStatus $status, string $expectedLabel) {
+    expect($status->getLabel())->toBe($expectedLabel);
+})->with([
+    '検討中'         => [ApplicationStatus::INTERESTED, '検討中'],
+    'カジュアル面談中' => [ApplicationStatus::CASUAL_INTERVIEW, 'カジュアル面談中'],
+    ...
+]);
+```
+
+---
+
+## 8. GitHub Mermaid パーサーにおける特殊記号（括弧）のエスケープ規則
+
+### 現象
+GitHub の Markdown プレビュー画面で Mermaid ダイアグラムが `Parse error` となり、描画に失敗した。
+
+```text
+Unable to render rich display
+Parse error on line 2:
+...tion [1. プレゼンテーション層 (Presentation Layer)
+-----------------------^
+Expecting 'SQE'..., got 'PS'
+```
+
+### 原因
+Mermaid の `subgraph ID [表示名]` 構文において、表示名の中に半角括弧 `(` や `)` を含めると、GitHub の構文解析器が括弧をノード定義（丸角ノードや円ノード等）の記法と誤認してしまう（`PS` = Parenthesis Start / 括弧開始）。
+
+### 解決策
+特殊文字（括弧や記号）を含むラベルは、必ず角括弧の内側をダブルクォーテーションでクォートする（`subgraph ID ["表示名 (詳細)"]`）。
+
+```mermaid
+graph TB
+    subgraph Presentation ["1. プレゼンテーション層 (Presentation Layer)"]
+        Controller["Controller<br>(HTTPリクエストハンドリング)"]
+    end
+```
+
+
 

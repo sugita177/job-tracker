@@ -25,7 +25,10 @@
   - 非対称可視性 (`public private(set)`): [01_domain_layer.md#6-php-84-非対称可視性-public-privateset-によるカプセル化](01_domain_layer.md#6-php-84-非対称可視性-public-privateset-によるカプセル化)
 - **テスト (Pest PHP / TDD)**
   - `DatasetMissing` の発生メカニズム: [01_domain_layer.md#1-pest-の-with-データプロバイダと-datasetmissing-の正体](01_domain_layer.md#1-pest-の-with-データプロバイダと-datasetmissing-の正体)
+  - `DatasetArgumentsMismatch` の引数マッピング規則: [01_domain_layer.md#7-pest-データセット-with-における引数マッピング仕様と-datasetargumentsmismatch](01_domain_layer.md#7-pest-データセット-with-における引数マッピング仕様と-datasetargumentsmismatch)
 - **静的解析 (PHPStan / Larastan)**
   - Level 8 厳格ルールの適用: [01_domain_layer.md#4-phpstan-level-8-による厳格な品質担保](01_domain_layer.md#4-phpstan-level-8-による厳格な品質担保)
+- **ドキュメンテーション (Markdown / Mermaid)**
+  - Mermaid パーサーの記号エスケープ: [01_domain_layer.md#8-github-mermaid-パーサーにおける特殊記号括弧のエスケープ規則](01_domain_layer.md#8-github-mermaid-パーサーにおける特殊記号括弧のエスケープ規則)
 
 
