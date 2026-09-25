@@ -9,6 +9,7 @@ use App\Domain\JobApplication\Exceptions\IncompleteApplicationException;
 use App\Domain\JobApplication\Exceptions\InvalidStatusTransitionException;
 use App\Domain\JobApplication\ValueObjects\ApplicationChannel;
 use App\Domain\JobApplication\ValueObjects\ApplicationStatus;
+use App\Domain\JobApplication\ValueObjects\HistoryType;
 use App\Domain\JobApplication\ValueObjects\Priority;
 use App\Domain\JobApplication\ValueObjects\StepType;
 use DateTimeImmutable;
@@ -16,11 +17,6 @@ use InvalidArgumentException;
 
 final class JobApplication
 {
-    /**
-     * @var list<SelectionStep>
-     */
-    private array $steps = [];
-
     public function __construct(
         public readonly int $userId,
         public readonly int $companyId,
@@ -32,15 +28,13 @@ final class JobApplication
         public private(set) ?string $jobUrl = null,
         public private(set) ?string $notes = null,
         public readonly ?int $id = null,
+        /** @var list<SelectionStep> $steps */
+        public private(set) array $steps = [],
+        /** @var list<StatusHistory> $statusHistories */
+        public private(set) array $statusHistories = [],
     ) {
-    }
-
-    /**
-     * @return list<SelectionStep>
-     */
-    public function getSteps(): array
-    {
-        return $this->steps;
+        $this->steps = $steps;
+        $this->statusHistories = $statusHistories;
     }
 
     /**
@@ -56,7 +50,7 @@ final class JobApplication
     /**
      * 通常の業務フローに従ってステータスを順遷移させる
      */
-    public function advanceStatus(ApplicationStatus $nextStatus): void
+    public function advanceStatus(ApplicationStatus $nextStatus, ?DateTimeImmutable $changedAt = null): void
     {
         if (! $this->currentStatus->canTransitionTo($nextStatus)) {
             throw InvalidStatusTransitionException::notAllowed($this->currentStatus, $nextStatus);
@@ -67,19 +61,45 @@ final class JobApplication
             throw IncompleteApplicationException::missingChannelOrAppliedAt();
         }
 
+        $fromStatus = $this->currentStatus;
         $this->currentStatus = $nextStatus;
+
+        $this->statusHistories[] = new StatusHistory(
+            fromStatus: $fromStatus,
+            toStatus: $nextStatus,
+            type: HistoryType::TRANSITION,
+            reason: null,
+            changedAt: $changedAt ?? new DateTimeImmutable(),
+        );
     }
 
     /**
      * 誤操作・連絡ミス等の例外対応としてステータスを訂正する（理由必須）
      */
-    public function correctStatus(ApplicationStatus $correctedStatus, string $reason): void{
+    public function correctStatus(
+        ApplicationStatus $correctedStatus,
+        string $reason,
+        ?DateTimeImmutable $changedAt = null,
+    ): void{
         $trimmedReason = trim($reason);
         if ($trimmedReason === '') {
             throw new InvalidArgumentException('ステータス訂正の理由は必須です。');
         }
 
+        $fromStatus = $this->currentStatus;
+
+        // StatusHistory を生成（訂正で理由が空文字ならここで例外が飛び、処理が中断する）
+        $history = new StatusHistory(
+            fromStatus: $fromStatus,
+            toStatus: $correctedStatus,
+            type: HistoryType::CORRECTION,
+            reason: $trimmedReason,
+            changedAt: $changedAt ?? new DateTimeImmutable(),
+        );
+
+        // 例外が出なかった場合のみ、集約の状態を変更して配列に追加する
         $this->currentStatus = $correctedStatus;
+        $this->statusHistories[] = $history;
     }
 
     /**

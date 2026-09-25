@@ -196,5 +196,72 @@ graph TB
     end
 ```
 
+---
+
+## 9. 強い例外保証（Strong Exception Guarantee）と副作用の順序
+
+### 背景
+集約ルート `JobApplication` の `correctStatus()` において、「ステータス訂正時に理由の入力を必須とし、空文字等の不正値が渡された場合は例外を投げる」というビジネスルールを実装した。
+
+### 設計上の落とし穴
+もし以下のように、ステータスの変更（副作用）を先に行ってから子エンティティ（`StatusHistory`）のバリデーションを行ってしまうと重大な不具合が生じる：
+
+```php
+// アンチパターン（状態の部分破損）
+$this->currentStatus = $correctedStatus; // ① 先にステータスを変更
+$this->statusHistories[] = new StatusHistory(...); // ② ここで例外がスローされる
+```
+
+この場合、例外がキャッチされて呼び出し元に返されたとしても、**メモリ上の集約インスタンスは `$currentStatus` だけが不正に変更されたまま残ってしまう（オブジェクトの部分的破損）**。
+
+### 解決策: 強い例外保証の徹底
+**「例外が発生し得るすべてのバリデーション・子オブジェクト生成を完了させてから、オブジェクトの状態を変更する」** という順序を徹底した。
+
+```php
+// ベストプラクティス（強い例外保証）
+$fromStatus = $this->currentStatus;
+
+// ① 先にバリデーションと子オブジェクト生成（不正時はここで安全に中断）
+$history = new StatusHistory(..., reason: $reason);
+
+// ② 例外が起きないことが確定してから、状態を変更・追加
+$this->currentStatus = $correctedStatus;
+$this->statusHistories[] = $history;
+```
+
+さらに、単に「例外がスローされること」だけでなく、「例外発生後もステータスや履歴が操作前の状態を完全に維持していること」を検証する単体テストを作成し、アーキテクチャの堅牢性を保証した。
+
+---
+
+## 10. PHPStan Level 8 における `trim($str ?? '')` の型ナローイングと `notIdentical.alwaysTrue`
+
+### 現象
+引数 `$reason`（型: `?string`）を正規化するコードで、PHPStan Level 8 から以下のエラーが報告された。
+
+```text
+Strict comparison using !== between string and null will always evaluate to true.
+🪪 notIdentical.alwaysTrue
+```
+
+```php
+$trimmedReason = trim($reason ?? '');
+$normalizedReason = ($trimmedReason !== null && $trimmedReason !== '') ? $trimmedReason : null;
+```
+
+### 原因
+- `$reason ?? ''` により、null の場合は空文字 `""` に変換される。
+- `trim(string)` の戻り値は常に `string` 型（決して null にはならない）と PHPStan の型推論エンジンによって厳格に型ナローイング（型絞り込み）される。
+- したがって、次の行の `$trimmedReason !== null` は論理的に「常に true」であり、デッドコード・冗長なチェックとして検出された。
+
+### 解決策
+PHPStan の型推論に素直に従い、空文字チェックのみで簡潔に記述する。
+
+```php
+$trimmedReason = trim($reason ?? '');
+$normalizedReason = $trimmedReason !== '' ? $trimmedReason : null;
+```
+これにより、`null` または空白のみの文字列はすべて安全に `null` へ正規化され、PHPStan Level 8 もエラーゼロを達成できる。
+
+
 
 

@@ -5,10 +5,10 @@ declare(strict_types=1);
 use App\Domain\JobApplication\Entities\JobApplication;
 use App\Domain\JobApplication\Entities\SelectionStep;
 use App\Domain\JobApplication\Exceptions\CannotAddStepException;
-use App\Domain\JobApplication\Exceptions\IncompleteApplicationException;
 use App\Domain\JobApplication\Exceptions\InvalidStatusTransitionException;
 use App\Domain\JobApplication\ValueObjects\ApplicationChannel;
 use App\Domain\JobApplication\ValueObjects\ApplicationStatus;
+use App\Domain\JobApplication\ValueObjects\HistoryType;
 use App\Domain\JobApplication\ValueObjects\Priority;
 use App\Domain\JobApplication\ValueObjects\StepType;
 
@@ -24,7 +24,7 @@ describe('JobApplication 集約ルート', function () {
         expect($jobApplication->currentStatus)->toBe(ApplicationStatus::INTERESTED)
             ->and($jobApplication->channel)->toBeNull()
             ->and($jobApplication->appliedAt)->toBeNull()
-            ->and($jobApplication->getSteps())->toBeEmpty();
+            ->and($jobApplication->steps)->toBeEmpty();
     });
 
     test('正式応募（apply）を実行すると、応募媒体・応募日が記録され書類選考中になる', function () {
@@ -111,10 +111,83 @@ describe('JobApplication 集約ルート', function () {
         // 2. カジュアル面談ステータスでは、面談ステップのみ許可
         $jobApplication->advanceStatus(ApplicationStatus::CASUAL_INTERVIEW);
         $jobApplication->addSelectionStep($casualStep);
-        expect($jobApplication->getSteps())->toHaveCount(1);
+        expect($jobApplication->steps)->toHaveCount(1);
 
         // カジュアル面談ステータスで 1次面接の追加は拒絶
         expect(fn () => $jobApplication->addSelectionStep($firstRoundStep))
             ->toThrow(CannotAddStepException::class);
+    });
+
+    test('advanceStatus を呼ぶと、通常遷移の StatusHistory が自動記録される', function () {
+        $channel = ApplicationChannel::agent('エージェント');
+        $appliedAt = new DateTimeImmutable('2026-03-01 10:00:00');
+
+        $jobApplication = new JobApplication(
+            userId: 1,
+            companyId: 10,
+            title: 'バックエンドエンジニア',
+            channel: $channel,
+            currentStatus: ApplicationStatus::DOCUMENT_SCREENING,
+            appliedAt: $appliedAt,
+        );
+
+        $changedAt = new DateTimeImmutable('2026-03-05 14:00:00');
+        $jobApplication->advanceStatus(ApplicationStatus::INTERVIEW_ADJUSTING, $changedAt);
+
+        $histories = $jobApplication->statusHistories;
+        expect($histories)->toHaveCount(1);
+
+        $firstHistory = $histories[0];
+        expect($firstHistory->fromStatus)->toBe(ApplicationStatus::DOCUMENT_SCREENING)
+            ->and($firstHistory->toStatus)->toBe(ApplicationStatus::INTERVIEW_ADJUSTING)
+            ->and($firstHistory->type)->toBe(HistoryType::TRANSITION)
+            ->and($firstHistory->reason)->toBeNull()
+            ->and($firstHistory->changedAt)->toBe($changedAt);
+    });
+
+    test('correctStatus を呼ぶと、訂正理由付きの StatusHistory が記録される', function () {
+        $jobApplication = new JobApplication(
+            userId: 1,
+            companyId: 10,
+            title: 'バックエンドエンジニア',
+            currentStatus: ApplicationStatus::REJECTED,
+        );
+
+        $changedAt = new DateTimeImmutable('2026-03-06 18:00:00');
+        $jobApplication->correctStatus(
+            ApplicationStatus::INTERVIEW_IN_PROGRESS,
+            '先方の誤送信による差し戻し連絡を受信',
+            $changedAt,
+        );
+
+        $histories = $jobApplication->statusHistories;
+        expect($histories)->toHaveCount(1);
+
+        $firstHistory = $histories[0];
+        expect($firstHistory->fromStatus)->toBe(ApplicationStatus::REJECTED)
+            ->and($firstHistory->toStatus)->toBe(ApplicationStatus::INTERVIEW_IN_PROGRESS)
+            ->and($firstHistory->type)->toBe(HistoryType::CORRECTION)
+            ->and($firstHistory->reason)->toBe('先方の誤送信による差し戻し連絡を受信')
+            ->and($firstHistory->changedAt)->toBe($changedAt);
+    });
+
+    test('correctStatus で不正な理由を指定して失敗した場合、ステータスや履歴は変更前の状態を維持する', function () {
+        $jobApplication = new JobApplication(
+            userId: 1,
+            companyId: 10,
+            title: 'バックエンドエンジニア',
+            currentStatus: ApplicationStatus::REJECTED,
+        );
+
+        // 空の理由で訂正を試みる（例外が発生する）
+        try {
+            $jobApplication->correctStatus(ApplicationStatus::OFFERED, '   ');
+        } catch (InvalidArgumentException) {
+            // 例外をキャッチ
+        }
+
+        // 例外発生後も、ステータスは REJECTED のままであり、履歴も追加されていないことを検証
+        expect($jobApplication->currentStatus)->toBe(ApplicationStatus::REJECTED)
+            ->and($jobApplication->statusHistories)->toBeEmpty();
     });
 });

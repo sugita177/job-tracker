@@ -28,6 +28,9 @@
   - `DatasetArgumentsMismatch` の引数マッピング規則: [01_domain_layer.md#7-pest-データセット-with-における引数マッピング仕様と-datasetargumentsmismatch](01_domain_layer.md#7-pest-データセット-with-における引数マッピング仕様と-datasetargumentsmismatch)
 - **静的解析 (PHPStan / Larastan)**
   - Level 8 厳格ルールの適用: [01_domain_layer.md#4-phpstan-level-8-による厳格な品質担保](01_domain_layer.md#4-phpstan-level-8-による厳格な品質担保)
+  - `trim($str ?? '')` の型ナローイングとデッドコード回避: [01_domain_layer.md#10-phpstan-level-8-における-trimstr---の型ナローイングと-notidenticalalwaystrue](01_domain_layer.md#10-phpstan-level-8-における-trimstr---の型ナローイングと-notidenticalalwaystrue)
+- **設計思想・アーキテクチャ**
+  - 強い例外保証（Strong Exception Guarantee）: [01_domain_layer.md#9-強い例外保証strong-exception-guaranteeと副作用の順序](01_domain_layer.md#9-強い例外保証strong-exception-guaranteeと副作用の順序)
 - **ドキュメンテーション (Markdown / Mermaid)**
   - Mermaid パーサーの記号エスケープ: [01_domain_layer.md#8-github-mermaid-パーサーにおける特殊記号括弧のエスケープ規則](01_domain_layer.md#8-github-mermaid-パーサーにおける特殊記号括弧のエスケープ規則)
 
