@@ -7,6 +7,15 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $job_application_id
+ * @property string $from_status
+ * @property string $to_status
+ * @property string $type
+ * @property string|null $reason
+ * @property \DateTimeImmutable|\Carbon\CarbonImmutable $changed_at
+ */
 final class StatusHistoryModel extends Model
 {
     protected $table = 'status_histories';

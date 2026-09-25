@@ -7,6 +7,17 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $job_application_id
+ * @property string $type
+ * @property \DateTimeImmutable|\Carbon\CarbonImmutable|null $scheduled_at
+ * @property string|null $location_or_url
+ * @property string|null $interviewer_info
+ * @property string|null $prep_memo
+ * @property string|null $review_memo
+ * @property string $result
+ */
 final class SelectionStepModel extends Model
 {
     protected $table = 'selection_steps';

@@ -9,6 +9,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $company_id
+ * @property string $title
+ * @property string $priority
+ * @property string|null $channel_type
+ * @property string|null $channel_detail_name
+ * @property string $current_status
+ * @property \DateTimeImmutable|\Carbon\CarbonImmutable|null $applied_at
+ * @property string|null $job_url
+ * @property string|null $notes
+ */
 final class JobApplicationModel extends Model
 {
     protected $table = 'job_applications';
