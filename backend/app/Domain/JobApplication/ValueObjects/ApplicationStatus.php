@@ -19,7 +19,7 @@ enum ApplicationStatus: string
     case WITHDRAWN = 'WITHDRAWN';
     case SKIPPED = 'SKIPPED';
 
-        public function getLabel(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::INTERESTED => '検討中',
@@ -34,7 +34,6 @@ enum ApplicationStatus: string
             self::SKIPPED => '検討見送り',
         };
     }
-
 
     /**
      * 次のステータスへ通常遷移可能かを判定する
@@ -84,13 +83,13 @@ enum ApplicationStatus: string
         };
     }
 
-
     /**
      * 次のステータスへ遷移する（不正な遷移の場合はドメイン例外をスロー）
      *
      * @throws InvalidStatusTransitionException
      */
-    public function transitionTo(self $next): self {
+    public function transitionTo(self $next): self
+    {
         if (! $this->canTransitionTo($next)) {
             throw new InvalidStatusTransitionException(
                 sprintf('現在のステータス [%s] から [%s] への遷移は許可されていません。', $this->value, $next->value)
@@ -100,4 +99,3 @@ enum ApplicationStatus: string
         return $next;
     }
 }
-    

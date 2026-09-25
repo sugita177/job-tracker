@@ -11,7 +11,7 @@ use DateTimeImmutable;
 final class SelectionStep
 {
     /**
-     * @param ?int $id 永続化前の新規エンティティは null、DB採番後は ID
+     * @param  ?int  $id  永続化前の新規エンティティは null、DB採番後は ID
      */
     public function __construct(
         public StepType $type,
@@ -22,8 +22,7 @@ final class SelectionStep
         public private(set) ?string $reviewMemo = null,
         public private(set) StepResult $result = StepResult::PENDING,
         public readonly ?int $id = null,
-    ) {
-    }
+    ) {}
 
     /**
      * 面接の振り返りメモと結果を記録する
@@ -38,7 +37,8 @@ final class SelectionStep
     /**
      * 面接日程および場所/URLを再設定（リスケジュール）する
      */
-    public function reschedule(DateTimeImmutable $newScheduleAt, ?string $newLocationOrUrl = null): void{
+    public function reschedule(DateTimeImmutable $newScheduleAt, ?string $newLocationOrUrl = null): void
+    {
         $this->scheduledAt = $newScheduleAt;
         if ($newLocationOrUrl !== null) {
             $this->locationOrUrl = trim($newLocationOrUrl);

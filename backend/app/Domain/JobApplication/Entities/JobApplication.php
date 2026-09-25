@@ -69,7 +69,7 @@ final class JobApplication
             toStatus: $nextStatus,
             type: HistoryType::TRANSITION,
             reason: null,
-            changedAt: $changedAt ?? new DateTimeImmutable(),
+            changedAt: $changedAt ?? new DateTimeImmutable,
         );
     }
 
@@ -80,7 +80,7 @@ final class JobApplication
         ApplicationStatus $correctedStatus,
         string $reason,
         ?DateTimeImmutable $changedAt = null,
-    ): void{
+    ): void {
         $trimmedReason = trim($reason);
         if ($trimmedReason === '') {
             throw new InvalidArgumentException('ステータス訂正の理由は必須です。');
@@ -94,7 +94,7 @@ final class JobApplication
             toStatus: $correctedStatus,
             type: HistoryType::CORRECTION,
             reason: $trimmedReason,
-            changedAt: $changedAt ?? new DateTimeImmutable(),
+            changedAt: $changedAt ?? new DateTimeImmutable,
         );
 
         // 例外が出なかった場合のみ、集約の状態を変更して配列に追加する
@@ -105,7 +105,8 @@ final class JobApplication
     /**
      * 選考・面談ステップを追加する（不変条件の保護）
      */
-    public function addSelectionStep(SelectionStep $step): void{
+    public function addSelectionStep(SelectionStep $step): void
+    {
         // 検討中および完了ステータスでは追加不可
         if (in_array($this->currentStatus, [
             ApplicationStatus::INTERESTED,

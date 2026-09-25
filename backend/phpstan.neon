@@ -10,4 +10,5 @@ parameters:
     level: 8
 
     ignoreErrors:
-        # 必要に応じて除外ルールをここに追加
+        # Pest の arch() DSL による動的メソッド呼び出しを除外
+        - '#Call to an undefined method Pest\\PendingCalls\\TestCall::expect\(\)#'

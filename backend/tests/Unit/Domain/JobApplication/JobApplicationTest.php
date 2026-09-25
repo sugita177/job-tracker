@@ -101,8 +101,8 @@ describe('JobApplication 集約ルート', function () {
             currentStatus: ApplicationStatus::INTERESTED,
         );
 
-        $casualStep = new SelectionStep(type: StepType::CASUAL_INTERVIEW, scheduledAt: new DateTimeImmutable());
-        $firstRoundStep = new SelectionStep(type: StepType::FIRST_ROUND, scheduledAt: new DateTimeImmutable());
+        $casualStep = new SelectionStep(type: StepType::CASUAL_INTERVIEW, scheduledAt: new DateTimeImmutable);
+        $firstRoundStep = new SelectionStep(type: StepType::FIRST_ROUND, scheduledAt: new DateTimeImmutable);
 
         // 1. 検討中（INTERESTED）ではステップ追加不可
         expect(fn () => $jobApplication->addSelectionStep($casualStep))

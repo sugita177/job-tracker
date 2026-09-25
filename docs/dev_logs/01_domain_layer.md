@@ -262,6 +262,50 @@ $normalizedReason = $trimmedReason !== '' ? $trimmedReason : null;
 ```
 これにより、`null` または空白のみの文字列はすべて安全に `null` へ正規化され、PHPStan Level 8 もエラーゼロを達成できる。
 
+---
+
+## 11. Pest Arch Testing によるアーキテクチャ自動検証と PHPStan の共存
+
+### 背景
+軽量DDDにおいて「Domain層がフレームワークや外部レイヤーに依存しないこと」「Entity が不変条件を守るため final class であること」といったアーキテクチャルールは、コードレビュー任せにすると時間経過とともに腐敗しやすい。
+そのため、Pest のアーキテクチャテスト（Arch Testing）を導入し、CI（自動テスト）で強制する仕組みを構築した。
+
+### ハマりどころ: Pest の動的チェーンと PHPStan の型定義の齟齬
+Arch テストファイル（`ArchTest.php`）を配置したところ、`make analyze` で以下のエラーが発生した。
+
+```text
+Line tests/Feature/ArchTest.php
+Call to an undefined method Pest\PendingCalls\TestCall::expect().
+🪪 method.notFound
+```
+
+- **原因**: Pest の `arch()->expect(...)` というチェーン構文は、PHPの実行時には動的呼び出し（マジックメソッド等）によって正しく解釈されるが、静的解析ツールである PHPStan はコード定義の型情報（Docblock）をそのまま読むため、「`TestCall` クラスに `expect()` メソッドが存在しない」と誤認した。
+- **解決策**: プロジェクト全体の型チェックレベル（Level 8）を緩めるのではなく、`phpstan.neon` の `ignoreErrors` にピンポイントで除外ルールを追加した。
+  ```neon
+  ignoreErrors:
+      - '#Call to an undefined method Pest\\PendingCalls\\TestCall::expect\(\)#'
+  ```
+
+### アサーションのトートロジー（同語反復）回避
+当初、Enum の存在を検証するために `->enums()->toBeEnums()` と記述したが、これは「Enumにフィルターした対象がEnumであること」を検証しているだけであり、自明なトートロジー（テストとしての意味がない）であった。
+PHP の仕様上、`enum` は自動的に `final` かつ不変になるため、クラスのみを抽出して `classes()->toBeFinal()` を検証するスタイルに統一した。
+
+---
+
+## 12. 軽量DDDにおける User エンティティの非作成とコアドメイン集中
+
+### 設計判断
+ドメイン層に `JobApplication` や `Company` の集約エンティティを実装した一方、`User` エンティティはあえてドメイン層に作らず、`userId: int`（テナント識別子）としてのみ扱う設計判断を下した。
+
+### 根拠とトレードオフ
+- **コアドメインと汎用サブドメインの分離**:
+  - `JobApplication` や `Company` は、選考状態遷移マトリクスや不変条件などの複雑なビジネスルールが凝縮された「コアドメイン（中核）」であるため、Eloquent から切り離して TDD で徹底保護する価値が非常に高い。
+  - 一方、`User` は氏名・メールアドレス保持や認証・認可が中心の「汎用サブドメイン」であり、本システム固有の複雑なビジネスルールを持たない。
+- **YAGNI原則と過度な抽象化の防止**:
+  - `User` にまでドメインエンティティと Eloquent ↔ Domain 相互マッピング層を設けると、単なるボイラープレートの肥大化を招く。
+  - 認証・認可は Laravel Sanctum の強みを最大限に活かし、ドメイン層では `userId: int` によるテナント境界の防衛に集中する「軽量DDD」の実戦的アプローチを採用した。
+
+
 
 
 

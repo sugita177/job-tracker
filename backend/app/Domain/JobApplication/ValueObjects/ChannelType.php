@@ -18,11 +18,11 @@ enum ChannelType: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::DIRECT   => '直接応募',
-            self::AGENT    => 'エージェント',
-            self::MEDIA    => '転職サイト',
+            self::DIRECT => '直接応募',
+            self::AGENT => 'エージェント',
+            self::MEDIA => '転職サイト',
             self::REFERRAL => 'リファラル',
-            self::OTHER    => 'その他',
+            self::OTHER => 'その他',
         };
     }
 }

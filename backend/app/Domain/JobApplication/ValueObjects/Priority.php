@@ -16,9 +16,9 @@ enum Priority: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::HIGH   => '高 ★★★',
+            self::HIGH => '高 ★★★',
             self::MEDIUM => '中 ★★☆',
-            self::LOW    => '低 ★☆☆',
+            self::LOW => '低 ★☆☆',
         };
     }
 
@@ -28,10 +28,9 @@ enum Priority: string
     public function getWeight(): int
     {
         return match ($this) {
-            self::HIGH   => 3,
+            self::HIGH => 3,
             self::MEDIUM => 2,
-            self::LOW    => 1,
+            self::LOW => 1,
         };
     }
-
 }

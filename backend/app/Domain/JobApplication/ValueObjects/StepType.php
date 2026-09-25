@@ -17,11 +17,11 @@ enum StepType: string
     {
         return match ($this) {
             self::CASUAL_INTERVIEW => 'カジュアル面談',
-            self::FIRST_ROUND      => '1次面接',
-            self::SECOND_ROUND     => '2次面接',
-            self::FINAL_ROUND      => '最終面接',
-            self::CODING_TEST      => 'コーディング試験',
-            self::OTHER            => 'その他',
+            self::FIRST_ROUND => '1次面接',
+            self::SECOND_ROUND => '2次面接',
+            self::FINAL_ROUND => '最終面接',
+            self::CODING_TEST => 'コーディング試験',
+            self::OTHER => 'その他',
         };
     }
 

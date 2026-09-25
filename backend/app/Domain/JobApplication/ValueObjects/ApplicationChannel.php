@@ -7,6 +7,7 @@ namespace App\Domain\JobApplication\ValueObjects;
 final class ApplicationChannel
 {
     public readonly ChannelType $type;
+
     public readonly ?string $detailName;
 
     public function __construct(ChannelType $type, ?string $detailName = null)
@@ -32,7 +33,7 @@ final class ApplicationChannel
      */
     public function equals(self $other): bool
     {
-        return $this->type === $other->type 
+        return $this->type === $other->type
             && $this->detailName === $other->detailName;
     }
 

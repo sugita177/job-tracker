@@ -14,9 +14,9 @@ enum StepResult: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::PENDING        => '結果待ち',
-            self::PASSED         => '通過',
-            self::FAILED         => 'お見送り',
+            self::PENDING => '結果待ち',
+            self::PASSED => '通過',
+            self::FAILED => 'お見送り',
             self::NOT_APPLICABLE => '判定なし',
         };
     }
