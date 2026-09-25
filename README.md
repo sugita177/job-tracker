@@ -63,6 +63,9 @@ Laravel標準の利便性（FormRequest, Resource, Policy）を活かしつつ�
   - 画面一覧、Mermaid画面遷移図、ダッシュボード/詳細/訂正モーダルのワイヤーフレーム
 - [Architecture Decision Records (ADR)](docs/adr/0001-use-lightweight-ddd.md)
   - ADR 0001: 軽量ドメイン駆動設計 (Lightweight DDD) の採用
+- [開発・技術学習ログ (Development & Learning Logs)](docs/dev_logs/README.md)
+  - 実装過程で得られた言語仕様（PHP 8 match式、SPL例外）、Pestの挙動、静的解析の知見ナレッジベース
+
 
 ---
 

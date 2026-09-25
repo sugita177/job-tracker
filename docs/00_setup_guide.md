@@ -113,20 +113,34 @@ npm run dev
 
 ---
 
-## 4. テストの実行
+## 4. テスト・静的解析・品質チェックの実行
+
+Makefile を用いて、ルートからコマンド1発で品質チェックを実行できます。
 
 ### バックエンドテスト (Pest)
 ```bash
-cd backend
-./vendor/bin/sail pest
+make test
+# または: cd backend && ./vendor/bin/sail pest
+```
+
+### バックエンド静的型検査 (PHPStan Level 8)
+```bash
+make analyze
+# または: cd backend && ./vendor/bin/sail bin phpstan analyse
+```
+
+### バックエンドコード自動整形 (Laravel Pint)
+```bash
+make pint
+# または: cd backend && ./vendor/bin/sail bin pint
 ```
 
 ### フロントエンド静的チェック (ESLint & TypeScript)
 ```bash
-cd frontend
-npm run lint
-npx tsc --noEmit
+make lint
+# または: cd frontend && npm run lint && npx tsc --noEmit
 ```
+
 
 ---
 

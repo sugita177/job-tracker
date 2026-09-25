@@ -1,0 +1,14 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - tests/
+
+    # 厳格な型チェック (Level 8: 戻り値・引数・プロパティの型指定を徹底)
+    level: 8
+
+    ignoreErrors:
+        # Pest の arch() DSL による動的メソッド呼び出しを除外
+        - '#Call to an undefined method Pest\\PendingCalls\\TestCall::expect\(\)#'

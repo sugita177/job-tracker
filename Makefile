@@ -17,6 +17,12 @@ dev: ## フロントエンド開発サーバー (Vite) を起動
 test: ## バックエンドのテスト (Pest) を実行
 	cd backend && ./vendor/bin/sail pest
 
+analyze: ## バックエンドの静的解析 (PHPStan Level 8) を実行
+	cd backend && ./vendor/bin/sail bin phpstan analyse
+
+pint: ## バックエンドのコード整形 (Laravel Pint) を実行
+	cd backend && ./vendor/bin/sail bin pint
+
 lint: ## フロントエンドのコード検証 (ESLint)
 	cd frontend && npm run lint
 
