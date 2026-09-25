@@ -36,3 +36,11 @@ arch('Entities はすべて final class であること')
     ])
     ->classes()
     ->toBeFinal();
+
+// 6. Repository はすべて interface であること
+arch('Domain層の Repositories はすべて interface であること')
+    ->expect([
+        'App\Domain\Company\Repositories',
+        'App\Domain\JobApplication\Repositories',
+    ])
+    ->toBeInterfaces();
