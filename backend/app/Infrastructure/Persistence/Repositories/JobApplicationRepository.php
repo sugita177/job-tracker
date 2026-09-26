@@ -87,6 +87,18 @@ final class JobApplicationRepository implements JobApplicationRepositoryInterfac
             $jobApplicationId = (int) $model->id;
             assert($jobApplicationId > 0);
 
+            // 集約内に現在存在するステップの ID 一覧を収集
+            $currentStepIds = array_values(array_filter(
+                array_map(fn (SelectionStep $step) => $step->id, $jobApplication->steps),
+                fn (?int $id) => $id !== null
+            ));
+
+            // 集約から削除されたステップを DB からも同期削除
+            SelectionStepModel::query()
+                ->where('job_application_id', $jobApplicationId)
+                ->whereNotIn('id', $currentStepIds)
+                ->delete();
+
             // SelectionStep の保存（既存のIDを持つものは更新、新規は作成）
             foreach ($jobApplication->steps as $step) {
                 $stepModel = $step->id !== null

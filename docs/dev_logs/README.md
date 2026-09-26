@@ -10,7 +10,7 @@
 | :--- | :--- | :--- |
 | [01. ドメイン層の実装とTDD](01_domain_layer.md) | Phase 1 (Domain Layer) | ・Pest の `with()` データプロバイダとクラス評価ライフサイクル<br>・PHP 8 `match` 式の構文特性（文と式の違い・末尾セミコロン）<br>・PHP標準 `DomainException` を継承する設計的根拠<br>・PHPStan Level 8 における型付けの厳格性<br>・緩やかな比較 (`!=`) の排除と型推論<br>・PHP 8.4+ 非対称可視性 (`public private(set)`) |
 | [02. インフラ層・DB設計・リポジトリ](02_infrastructure_db.md) | Phase 2 (Infrastructure) | ・Eloquent とドメインエンティティの相互マッピングと責務分離<br>・型ナローイング（Type Narrowing）と `assert()` の活用<br>・Eloquent 日時キャストと PHPDoc 共変・反変制約<br>・Pest による DB 統合テスト設計（`assertDatabaseHas` 関数スタイル）<br>・集約の整合性とトランザクション戦略（単一 vs 複数テーブル）<br>・Laravel Collection の `list<T>` 型推論と `array_values()`<br>・`ServiceProvider::$bindings` による宣言的 DI バインディング |
-| [03. ユースケース・RESTful API・バリデーション](03_api_usecases.md) | Phase 3 (API & UseCase) | ・多重防御（Defense in Depth）によるテナント分離セキュリティ<br>・FormRequest のライフサイクルとデータ取得設計（`validated` vs `input` vs `filled`）<br>・ドメイン例外の透過的 HTTP マッピング（Laravel 11+ `bootstrap/app.php`）<br>・サイレントフォールバックの排除（フェイルファスト原則）<br>・API レスポンスの日時表現と標準規格（`DateTimeImmutable::ATOM`）<br>・PHPStan Level 8 における `??` と `?->` の重複検証 |
+| [03. ユースケース・RESTful API・バリデーション](03_api_usecases.md) | Phase 3 (API & UseCase) | ・多重防御（Defense in Depth）によるテナント分離セキュリティ<br>・FormRequest のライフサイクルとデータ取得設計（`validated` vs `input` vs `filled`）<br>・ドメイン例外の透過的 HTTP マッピング（Laravel 11+ `bootstrap/app.php`）<br>・サイレントフォールバックの排除（フェイルファスト原則）<br>・API レスポンスの日時表現と標準規格（`DateTimeImmutable::ATOM`）<br>・PHPStan Level 8 における `??` と `?->` の重複検証<br>・デッドコード検出（`unused-public`）と静的解析運用設計<br>・集約配下の子エンティティ（`SelectionStep`）整合性保護と将来課題 |
 | `04_auth_security.md` | Phase 4 (Auth & Security) | *(準備中: Sanctum SPA Cookie認証・Gate認可)* |
 | `05_frontend_react.md` | Phase 5 (Frontend SPA) | *(準備中: React 18+・TypeScript・Vite・型安全APIクライアント)* |
 
@@ -37,6 +37,7 @@
   - `trim($str ?? '')` の型ナローイングとデッドコード回避: [01_domain_layer.md#10-phpstan-level-8-における-trimstr---の型ナローイングと-notidenticalalwaystrue](01_domain_layer.md#10-phpstan-level-8-における-trimstr---の型ナローイングと-notidenticalalwaystrue)
   - Eloquent 日時キャストと PHPDoc 共変・反変制約: [02_infrastructure_db.md#3-eloquent-日時キャストimmutable_datetime-と-phpdoc-共変反変の制約](02_infrastructure_db.md#3-eloquent-日時キャストimmutable_datetime-と-phpdoc-共変反変の制約)
   - `??` と `?->` の重複構文解析: [03_api_usecases.md#6-phpstan-level-8-における--と--の重複検証](03_api_usecases.md#6-phpstan-level-8-における--と--の重複検証)
+  - 未使用メソッド検出（`unused-public`）と運用設計【将来導入検討】: [03_api_usecases.md#7-未使用-public-メソッドデッドコードの検出ツールと静的解析運用設計](03_api_usecases.md#7-未使用-public-メソッドデッドコードの検出ツールと静的解析運用設計)
 - **設計思想・アーキテクチャ**
   - 強い例外保証（Strong Exception Guarantee）: [01_domain_layer.md#9-強い例外保証strong-exception-guaranteeと副作用の順序](01_domain_layer.md#9-強い例外保証strong-exception-guaranteeと副作用の順序)
   - Userエンティティの非作成とコアドメイン集中: [01_domain_layer.md#12-軽量dddにおける-user-エンティティの非作成とコアドメイン集中](01_domain_layer.md#12-軽量dddにおける-user-エンティティの非作成とコアドメイン集中)
@@ -47,6 +48,7 @@
   - FormRequest のライフサイクルとデータ取得設計: [03_api_usecases.md#2-formrequest-のライフサイクルとデータ取得の設計判断](03_api_usecases.md#2-formrequest-のライフサイクルとデータ取得の設計判断)
   - ドメイン例外の透過的 HTTP マッピング: [03_api_usecases.md#3-ドメイン例外の透過的-http-マッピングlaravel-11-bootstrapappphp](03_api_usecases.md#3-ドメイン例外の透過的-http-マッピングlaravel-11-bootstrapappphp)
   - サイレントフォールバックの排除（フェイルファスト原則）: [03_api_usecases.md#4-サイレントフォールバックの排除フェイルファスト原則](03_api_usecases.md#4-サイレントフォールバックの排除フェイルファスト原則)
+  - 選考ステップ整合性保護と今後の課題【未実装 / Phase 2 バックログ】: [03_api_usecases.md#8-集約配下の子エンティティselectionstepの整合性保護と今後の課題-phase-2-バックログ](03_api_usecases.md#8-集約配下の子エンティティselectionstepの整合性保護と今後の課題-phase-2-バックログ)
 - **ドキュメンテーション (Markdown / Mermaid)**
   - Mermaid パーサーの記号エスケープ: [01_domain_layer.md#8-github-mermaid-パーサーにおける特殊記号括弧のエスケープ規則](01_domain_layer.md#8-github-mermaid-パーサーにおける特殊記号括弧のエスケープ規則)
 

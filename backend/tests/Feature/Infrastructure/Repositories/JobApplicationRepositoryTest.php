@@ -8,6 +8,7 @@ use App\Domain\JobApplication\Entities\SelectionStep;
 use App\Domain\JobApplication\ValueObjects\ApplicationChannel;
 use App\Domain\JobApplication\ValueObjects\ApplicationStatus;
 use App\Domain\JobApplication\ValueObjects\Priority;
+use App\Domain\JobApplication\ValueObjects\StepResult;
 use App\Domain\JobApplication\ValueObjects\StepType;
 use App\Infrastructure\Persistence\Repositories\CompanyRepository;
 use App\Infrastructure\Persistence\Repositories\JobApplicationRepository;
@@ -178,5 +179,57 @@ describe('JobApplicationRepository (統合テスト)', function () {
         assertDatabaseMissing('job_applications', ['id' => $saved->id]);
         assertDatabaseMissing('selection_steps', ['job_application_id' => $saved->id]);
         assertDatabaseMissing('status_histories', ['job_application_id' => $saved->id]);
+    });
+
+    test('JobApplicationRepository (統合テスト) → 集約を通した SelectionStep の更新と削除が DB に同期される', function () {
+        /** @var User $user */
+        $user = User::factory()->create();
+        $companyRepo = new CompanyRepository();
+        $jobRepo = new JobApplicationRepository();
+
+        $company = $companyRepo->save(new Company(userId: $user->id, name: 'テスト企業'));
+        assert($company->id !== null);
+
+        // 1. 初期状態で 2 つのステップを持つ求人を作成して保存
+        $app = JobApplication::createApplied(
+            userId: $user->id,
+            companyId: $company->id,
+            title: 'インフラエンジニア',
+            priority: Priority::HIGH,
+            channel: ApplicationChannel::direct(),
+            appliedAt: new DateTimeImmutable('2026-03-01 10:00:00'),
+        );
+        $app->addSelectionStep(new SelectionStep(type: StepType::FIRST_ROUND, scheduledAt: new DateTimeImmutable('2026-03-10 10:00:00')));
+        $app->addSelectionStep(new SelectionStep(type: StepType::SECOND_ROUND, scheduledAt: new DateTimeImmutable('2026-03-15 10:00:00')));
+
+        $saved = $jobRepo->save($app);
+        expect($saved->steps)->toHaveCount(2);
+
+        $step1Id = $saved->steps[0]->id;
+        $step2Id = $saved->steps[1]->id;
+        assert($step1Id !== null && $step2Id !== null);
+
+        // 2. step1 をリスケジュール & 結果記録し、step2 を集約から削除して保存
+        $saved->rescheduleSelectionStep($step1Id, new DateTimeImmutable('2026-03-12 14:00:00'), 'https://zoom.us/test');
+        $saved->recordStepReview($step1Id, '一次通過', StepResult::PASSED);
+        $saved->removeSelectionStep($step2Id);
+
+        $updated = $jobRepo->save($saved);
+
+        // 3. 検証: step1 は更新され、step2 は DB から完全に削除されていること
+        expect($updated->steps)->toHaveCount(1)
+            ->and($updated->steps[0]->id)->toBe($step1Id)
+            ->and($updated->steps[0]->reviewMemo)->toBe('一次通過')
+            ->and($updated->steps[0]->result)->toBe(StepResult::PASSED);
+
+        assertDatabaseHas('selection_steps', [
+            'id' => $step1Id,
+            'review_memo' => '一次通過',
+            'result' => StepResult::PASSED->value,
+        ]);
+
+        assertDatabaseMissing('selection_steps', [
+            'id' => $step2Id,
+        ]);
     });
 });
