@@ -10,6 +10,7 @@ use App\Domain\JobApplication\ValueObjects\ApplicationChannel;
 use App\Domain\JobApplication\ValueObjects\ApplicationStatus;
 use App\Domain\JobApplication\ValueObjects\HistoryType;
 use App\Domain\JobApplication\ValueObjects\Priority;
+use App\Domain\JobApplication\ValueObjects\StepResult;
 use App\Domain\JobApplication\ValueObjects\StepType;
 
 describe('JobApplication 集約ルート', function () {
@@ -279,5 +280,61 @@ describe('JobApplication 集約ルート', function () {
             priority: Priority::MEDIUM,
             appliedAt: $appliedAt,
         ))->toThrow(InvalidArgumentException::class, '検討中ステータスの求人に応募日を設定することはできません。');
+    });
+
+    test('JobApplication 集約ルート → 選考ステップの日程変更、結果記録、事前メモ更新ができる', function () {
+        $app = JobApplication::createApplied(
+            userId: 1,
+            companyId: 1,
+            title: 'バックエンドエンジニア',
+            priority: Priority::HIGH,
+            channel: ApplicationChannel::direct(),
+            appliedAt: new DateTimeImmutable('2026-03-01 10:00:00'),
+        );
+
+        $step = new SelectionStep(
+            type: StepType::FIRST_ROUND,
+            scheduledAt: new DateTimeImmutable('2026-03-10 14:00:00'),
+            id: 100,
+        );
+        $app->addSelectionStep($step);
+
+        // 1. 日程のリスケジュール
+        $app->rescheduleSelectionStep(100, new DateTimeImmutable('2026-03-12 15:00:00'), 'https://zoom.us/j/123');
+        expect($step->scheduledAt?->format('Y-m-d H:i:s'))->toBe('2026-03-12 15:00:00')
+            ->and($step->locationOrUrl)->toBe('https://zoom.us/j/123');
+
+        // 2. 事前準備情報の更新
+        $app->updateStepPreparation(100, interviewerInfo: 'CTO', prepMemo: '質問準備');
+        expect($step->interviewerInfo)->toBe('CTO')
+            ->and($step->prepMemo)->toBe('質問準備');
+
+        // 3. 結果と振り返りの記録
+        $app->recordStepReview(100, '好感触だった', StepResult::PASSED);
+        expect($step->reviewMemo)->toBe('好感触だった')
+            ->and($step->result)->toBe(StepResult::PASSED);
+    });
+
+    test('JobApplication 集約ルート → removeSelectionStep で指定ステップを削除できる', function () {
+        $app = JobApplication::createApplied(
+            userId: 1,
+            companyId: 1,
+            title: 'バックエンドエンジニア',
+            priority: Priority::HIGH,
+            channel: ApplicationChannel::direct(),
+            appliedAt: new DateTimeImmutable('2026-03-01 10:00:00'),
+        );
+
+        $step1 = new SelectionStep(type: StepType::FIRST_ROUND, scheduledAt: null, id: 101);
+        $step2 = new SelectionStep(type: StepType::SECOND_ROUND, scheduledAt: null, id: 102);
+        $app->addSelectionStep($step1);
+        $app->addSelectionStep($step2);
+
+        expect($app->steps)->toHaveCount(2);
+
+        $app->removeSelectionStep(101);
+
+        expect($app->steps)->toHaveCount(1)
+            ->and($app->steps[0]->id)->toBe(102);
     });
 });

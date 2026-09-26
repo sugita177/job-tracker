@@ -11,6 +11,7 @@ use App\Domain\JobApplication\ValueObjects\ApplicationChannel;
 use App\Domain\JobApplication\ValueObjects\ApplicationStatus;
 use App\Domain\JobApplication\ValueObjects\HistoryType;
 use App\Domain\JobApplication\ValueObjects\Priority;
+use App\Domain\JobApplication\ValueObjects\StepResult;
 use App\Domain\JobApplication\ValueObjects\StepType;
 use DateTimeImmutable;
 use InvalidArgumentException;
@@ -235,4 +236,91 @@ final class JobApplication
         }
     }
 
+    /**
+     * 選考ステップを見つける
+     */
+    public function findSelectionStep(int $stepId): ?SelectionStep
+    {
+        foreach ($this->steps as $step) {
+            if ($step->id === $stepId) {
+                return $step;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 選考ステップの日程を再設定する
+     */
+    public function rescheduleSelectionStep(
+        int $stepId,
+        DateTimeImmutable $newScheduleAt,
+        ?string $newLocationOrUrl = null,
+    ): SelectionStep {
+        $step = $this->findSelectionStep($stepId);
+        if ($step === null) {
+            throw new InvalidArgumentException('指定された選考ステップが見つかりません。');
+        }
+
+        $step->reschedule($newScheduleAt, $newLocationOrUrl);
+
+        return $step;
+    }
+
+    /**
+     * 選考ステップの振り返りメモと結果を記録する
+     */
+    public function recordStepReview(
+        int $stepId,
+        string $reviewMemo,
+        StepResult $result,
+    ): SelectionStep {
+        $step = $this->findSelectionStep($stepId);
+        if ($step === null) {
+            throw new InvalidArgumentException('指定された選考ステップが見つかりません。');
+        }
+
+        $step->recordReview($reviewMemo, $result);
+
+        return $step;
+    }
+
+    /**
+     * 選考ステップの事前準備情報を更新する
+     */
+    public function updateStepPreparation(
+        int $stepId,
+        ?string $locationOrUrl = null,
+        ?string $interviewerInfo = null,
+        ?string $prepMemo = null,
+        ?StepType $type = null,
+    ): SelectionStep {
+        $step = $this->findSelectionStep($stepId);
+        if ($step === null) {
+            throw new InvalidArgumentException('指定された選考ステップが見つかりません。');
+        }
+
+        if ($type !== null && $this->currentStatus === ApplicationStatus::CASUAL_INTERVIEW && $type !== StepType::CASUAL_INTERVIEW) {
+            throw CannotAddStepException::onlyCasualInterviewAllowed();
+        }
+
+        $step->updatePreparation($locationOrUrl, $interviewerInfo, $prepMemo, $type);
+
+        return $step;
+    }
+
+    /**
+     * 選考ステップを削除する
+     */
+    public function removeSelectionStep(int $stepId): void
+    {
+        $filtered = array_filter($this->steps, fn (SelectionStep $s) => $s->id !== $stepId);
+
+        if (count($filtered) === count($this->steps)) {
+            throw new InvalidArgumentException('指定された選考ステップが見つかりません。');
+        }
+
+        $this->steps = array_values($filtered);
+    }
 }

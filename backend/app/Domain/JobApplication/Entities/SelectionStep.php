@@ -44,4 +44,22 @@ final class SelectionStep
             $this->locationOrUrl = trim($newLocationOrUrl);
         }
     }
+
+    /**
+     * 面接の事前準備情報（場所/URL、面接官情報、事前メモ、種別）を更新する
+     */
+    public function updatePreparation(
+        ?string $locationOrUrl = null,
+        ?string $interviewerInfo = null,
+        ?string $prepMemo = null,
+        ?StepType $type = null,
+    ): void {
+        if ($type !== null) {
+            $this->type = $type;
+        }
+        $this->locationOrUrl = $locationOrUrl !== null ? trim($locationOrUrl) : null;
+        $this->interviewerInfo = $interviewerInfo !== null ? trim($interviewerInfo) : null;
+        $this->prepMemo = $prepMemo !== null ? trim($prepMemo) : null;
+    }
+
 }
