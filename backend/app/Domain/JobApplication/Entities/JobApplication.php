@@ -221,7 +221,7 @@ final class JobApplication
         $this->jobUrl = $jobUrl;
         $this->notes = $notes;
 
-                // 媒体は検討中でも選考中でも更新可能
+        // 媒体は検討中でも選考中でも更新可能
         if ($channel !== null) {
             $this->channel = $channel;
         }
