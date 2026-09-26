@@ -233,4 +233,23 @@ PHPStan の拡張プラグインである `tomasvotruba/unused-public` は、ク
   - **現状の課題**: 一次面接と二次面接がある状態で、中間の一次面接だけが削除できてしまうと、選考のタイムラインが破綻する。
   - **将来の対応案**: `removeSelectionStep()` において、「最新（末尾）のステップのみ削除可能」とするバリデーションガードを集約ルートに設ける。
 
+---
+
+## 9. Scribe による Single Source of Truth なドキュメント自動生成と OpenAPI スキーマ駆動開発
+
+### 背景
+手書きの API 仕様書（Swagger UI の YAML 直接編集や Excel 等）は、バックエンドの実装変更に追従できず、短期間で「仕様書とコードの乖離（二重管理）」が発生する。
+これを根本解決するため、Laravel のソースコード（Route, Controller, FormRequest, JsonResource）を唯一の信頼できる情報源（Single Source of Truth）としてドキュメントを完全自動生成する方針を採用した。
+
+### 設計判断と得られた知見
+1. **Scribe の採用と OpenAPI 3.0.3 出力**:
+   - `knuckleswtf/scribe` を導入し、`sail artisan scribe:generate` 一撃で対話型 HTML 仕様書と `openapi.yaml` を同時に出力。
+   - `type => 'static'` を採用し、`public/docs/openapi.yaml` および `public/docs/index.html` として生成。Git 管理下に置くことで、GitHub 上でレビュアーがスキーマを直接閲覧・検証できる状態にした。
+2. **フロントエンド型同期（TypeScript）への架け橋**:
+   - 生成された `openapi.yaml` は、Phase 5（フロントエンド SPA 開発）において `openapi-typescript` を用いた型定義自動生成に直接活用される。
+   - バックエンドの仕様変更がフロントエンドのビルド時型エラーとして即座に検知される、型安全なエンドツーエンド開発パイプラインの基盤が確立された。
+3. **セキュリティと公開性の検証**:
+   - `public/docs/` に出力されるのは API のエンドポイント仕様・パラメータ定義・レスポンススキーマのみであり、DB接続情報やユーザーの個人情報・生データは一切含まれないため、パブリックリポジトリに公開しても安全であることを確認した。
+
+
 

@@ -18,6 +18,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group 選考ステップ管理
+ *
+ * 各求人応募に紐づく面談・面接（カジュアル面談、一次面接、二次面接、最終面接等）の日程・メモ・結果を管理する API です。
+ */
 final class SelectionStepController extends Controller
 {
     /**

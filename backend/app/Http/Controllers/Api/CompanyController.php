@@ -20,6 +20,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
+/**
+ * @group 企業管理
+ *
+ * 応募先企業情報の登録・一覧取得・更新・削除を行う API です。
+ */
 final class CompanyController extends Controller
 {
     /**

@@ -1,0 +1,625 @@
+{
+    "variable": [
+        {
+            "id": "baseUrl",
+            "key": "baseUrl",
+            "type": "string",
+            "name": "string",
+            "value": "http:\/\/localhost:8000"
+        }
+    ],
+    "info": {
+        "name": "\u6c42\u4eba\u5fdc\u52df\u30fb\u9078\u8003\u30c8\u30e9\u30c3\u30ab\u30fc (Job Tracker) API Specification",
+        "_postman_id": "12841282-083c-489d-b3b7-5b9e3f3c89c7",
+        "description": "\u6c42\u4eba\u5fdc\u52df\u30fb\u9078\u8003\u30c8\u30e9\u30c3\u30ab\u30fc\u306e RESTful API \u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\u3002\u4f01\u696d\u60c5\u5831\u306e\u7ba1\u7406\u3001\u6c42\u4eba\u5fdc\u52df\u306e\u30e9\u30a4\u30d5\u30b5\u30a4\u30af\u30eb\uff08\u691c\u8a0e\u4e2d\u301c\u5185\u5b9a\u30fb\u627f\u8afe\uff09\u3001\u304a\u3088\u3073\u9762\u8ac7\u30fb\u9762\u63a5\uff08\u9078\u8003\u30b9\u30c6\u30c3\u30d7\uff09\u306e\u8a18\u9332\u3092\u7ba1\u7406\u3057\u307e\u3059\u3002",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "\u4f01\u696d\u7ba1\u7406",
+            "description": "\n\u5fdc\u52df\u5148\u4f01\u696d\u60c5\u5831\u306e\u767b\u9332\u30fb\u4e00\u89a7\u53d6\u5f97\u30fb\u66f4\u65b0\u30fb\u524a\u9664\u3092\u884c\u3046 API \u3067\u3059\u3002",
+            "item": [
+                {
+                    "name": "\u767b\u9332\u4f01\u696d\u4e00\u89a7\u306e\u53d6\u5f97",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/companies",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/companies"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u4f01\u696d\u306e\u65b0\u898f\u767b\u9332",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/companies",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/companies"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"b\",\"url\":\"http:\\\/\\\/bailey.com\\\/\",\"notes\":\"m\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u4f01\u696d\u8a73\u7d30\u306e\u53d6\u5f97",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/companies\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/companies\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the company."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u4f01\u696d\u60c5\u5831\u306e\u66f4\u65b0",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/companies\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/companies\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the company."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"b\",\"url\":\"http:\\\/\\\/bailey.com\\\/\",\"notes\":\"m\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u4f01\u696d\u306e\u524a\u9664",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/companies\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/companies\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the company."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u6c42\u4eba\u5fdc\u52df\u7ba1\u7406",
+            "description": "\n\u6c42\u4eba\u30dd\u30b8\u30b7\u30e7\u30f3\u306e\u5fdc\u52df\u60c5\u5831\u3001\u512a\u5148\u5ea6\u3001\u30b9\u30c6\u30fc\u30bf\u30b9\u9077\u79fb\uff08\u9806\u9077\u79fb\u30fb\u8aa4\u5165\u529b\u8a02\u6b63\uff09\u3092\u7ba1\u7406\u3059\u308b API \u3067\u3059\u3002",
+            "item": [
+                {
+                    "name": "\u5fdc\u52df\u4e00\u89a7\u53d6\u5f97",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u5fdc\u52df\u65b0\u898f\u4f5c\u6210",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"company_id\":16,\"title\":\"n\",\"priority\":\"MEDIUM\",\"status\":\"INTERESTED\",\"channel_type\":\"OTHER\",\"channel_detail_name\":\"g\",\"applied_at\":\"2026-09-26T21:48:34\",\"job_url\":\"http:\\\/\\\/www.okuneva.com\\\/fugiat-sunt-nihil-accusantium-harum-mollitia.html\",\"notes\":\"k\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u5fdc\u52df\u8a73\u7d30\u53d6\u5f97",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the job application."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u5fdc\u52df\u57fa\u672c\u60c5\u5831\u66f4\u65b0",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the job application."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"title\":\"b\",\"priority\":\"HIGH\",\"job_url\":\"http:\\\/\\\/bailey.com\\\/\",\"notes\":\"m\",\"channel_type\":\"OTHER\",\"channel_detail_name\":\"i\",\"applied_at\":\"2026-09-26T21:48:34\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u5fdc\u52df\u524a\u9664",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the job application."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u30b9\u30c6\u30fc\u30bf\u30b9\u9806\u5f53\u9032\u884c",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications\/:id\/advance-status",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications\/:id\/advance-status",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the job application."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"to_status\":\"DOCUMENT_SCREENING\",\"channel_type\":\"MEDIA\",\"channel_detail_name\":\"b\",\"applied_at\":\"2026-09-26T21:48:34\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u30b9\u30c6\u30fc\u30bf\u30b9\u8aa4\u5165\u529b\u8a02\u6b63",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications\/:id\/correct-status",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications\/:id\/correct-status",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the job application."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"to_status\":\"ACCEPTED\",\"reason\":\"b\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u9078\u8003\u30b9\u30c6\u30c3\u30d7\u7ba1\u7406",
+            "description": "\n\u5404\u6c42\u4eba\u5fdc\u52df\u306b\u7d10\u3065\u304f\u9762\u8ac7\u30fb\u9762\u63a5\uff08\u30ab\u30b8\u30e5\u30a2\u30eb\u9762\u8ac7\u3001\u4e00\u6b21\u9762\u63a5\u3001\u4e8c\u6b21\u9762\u63a5\u3001\u6700\u7d42\u9762\u63a5\u7b49\uff09\u306e\u65e5\u7a0b\u30fb\u30e1\u30e2\u30fb\u7d50\u679c\u3092\u7ba1\u7406\u3059\u308b API \u3067\u3059\u3002",
+            "item": [
+                {
+                    "name": "\u9078\u8003\u30b9\u30c6\u30c3\u30d7\u8ffd\u52a0",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications\/:jobApplicationId\/selection-steps",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications\/:jobApplicationId\/selection-steps",
+                            "variable": [
+                                {
+                                    "id": "jobApplicationId",
+                                    "key": "jobApplicationId",
+                                    "value": "architecto",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"type\":\"FIRST_ROUND\",\"scheduled_at\":\"2026-09-26T21:48:34\",\"location_or_url\":\"http:\\\/\\\/www.bailey.biz\\\/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html\",\"interviewer_info\":\"i\",\"prep_memo\":\"k\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u9078\u8003\u30b9\u30c6\u30c3\u30d7\u66f4\u65b0",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications\/:jobApplicationId\/selection-steps\/:stepId",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications\/:jobApplicationId\/selection-steps\/:stepId",
+                            "variable": [
+                                {
+                                    "id": "jobApplicationId",
+                                    "key": "jobApplicationId",
+                                    "value": "architecto",
+                                    "description": ""
+                                },
+                                {
+                                    "id": "stepId",
+                                    "key": "stepId",
+                                    "value": "architecto",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"type\":\"FINAL_ROUND\",\"scheduled_at\":\"2026-09-26T21:48:34\",\"location_or_url\":\"http:\\\/\\\/www.bailey.biz\\\/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html\",\"interviewer_info\":\"i\",\"prep_memo\":\"k\",\"review_memo\":\"h\",\"result\":\"PENDING\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u9078\u8003\u30b9\u30c6\u30c3\u30d7\u524a\u9664",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/job-applications\/:jobApplicationId\/selection-steps\/:stepId",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/job-applications\/:jobApplicationId\/selection-steps\/:stepId",
+                            "variable": [
+                                {
+                                    "id": "jobApplicationId",
+                                    "key": "jobApplicationId",
+                                    "value": "architecto",
+                                    "description": ""
+                                },
+                                {
+                                    "id": "stepId",
+                                    "key": "stepId",
+                                    "value": "architecto",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "Authorization",
+                "type": "string"
+            }
+        ]
+    }
+}

@@ -27,6 +27,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
+/**
+ * @group 求人応募管理
+ *
+ * 求人ポジションの応募情報、優先度、ステータス遷移（順遷移・誤入力訂正）を管理する API です。
+ */
 final class JobApplicationController extends Controller
 {
     /**
