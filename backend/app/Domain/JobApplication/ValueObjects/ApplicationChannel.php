@@ -28,6 +28,11 @@ final class ApplicationChannel
         return new self(ChannelType::AGENT, $agentName);
     }
 
+    public static function media(?string $mediaName = null): self
+    {
+        return new self(ChannelType::MEDIA, $mediaName);
+    }
+
     /**
      * 値オブジェクトの等価性（同一プロパティを持つか）を検証する
      */

@@ -1,0 +1,599 @@
+openapi: 3.0.3
+info:
+  title: '求人応募・選考トラッカー (Job Tracker) API Specification'
+  description: '求人応募・選考トラッカーの RESTful API ドキュメント。企業情報の管理、求人応募のライフサイクル（検討中〜内定・承諾）、および面談・面接（選考ステップ）の記録を管理します。'
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost:8000'
+tags:
+  -
+    name: 企業管理
+    description: "\n応募先企業情報の登録・一覧取得・更新・削除を行う API です。"
+  -
+    name: 求人応募管理
+    description: "\n求人ポジションの応募情報、優先度、ステータス遷移（順遷移・誤入力訂正）を管理する API です。"
+  -
+    name: 選考ステップ管理
+    description: "\n各求人応募に紐づく面談・面接（カジュアル面談、一次面接、二次面接、最終面接等）の日程・メモ・結果を管理する API です。"
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: 'すべての API エンドポイントは Laravel Sanctum によって保護されています。リクエストヘッダーに <code>Authorization: Bearer &lt;token&gt;</code> を付与してください。'
+security:
+  -
+    default: []
+paths:
+  /api/companies:
+    get:
+      summary: 登録企業一覧の取得
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 企業管理
+    post:
+      summary: 企業の新規登録
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 企業管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                url:
+                  type: string
+                  description: 'Must be a valid URL. Must not be greater than 2048 characters.'
+                  example: 'http://bailey.com/'
+                  nullable: true
+                notes:
+                  type: string
+                  description: 'Must not be greater than 5000 characters.'
+                  example: m
+                  nullable: true
+              required:
+                - name
+  '/api/companies/{id}':
+    get:
+      summary: 企業詳細の取得
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 企業管理
+    put:
+      summary: 企業情報の更新
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 企業管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                url:
+                  type: string
+                  description: 'Must be a valid URL. Must not be greater than 2048 characters.'
+                  example: 'http://bailey.com/'
+                  nullable: true
+                notes:
+                  type: string
+                  description: 'Must not be greater than 5000 characters.'
+                  example: m
+                  nullable: true
+              required:
+                - name
+    delete:
+      summary: 企業の削除
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 企業管理
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the company.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/job-applications:
+    get:
+      summary: 応募一覧取得
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 求人応募管理
+    post:
+      summary: 応募新規作成
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 求人応募管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_id:
+                  type: integer
+                  description: 'Must match an existing stored value.'
+                  example: 16
+                title:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                priority:
+                  type: string
+                  description: ''
+                  example: MEDIUM
+                  enum:
+                    - HIGH
+                    - MEDIUM
+                    - LOW
+                status:
+                  type: string
+                  description: ''
+                  example: INTERESTED
+                  enum:
+                    - INTERESTED
+                    - DOCUMENT_SCREENING
+                channel_type:
+                  type: string
+                  description: ''
+                  example: OTHER
+                  enum:
+                    - DIRECT
+                    - AGENT
+                    - MEDIA
+                    - REFERRAL
+                    - OTHER
+                  nullable: true
+                channel_detail_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: true
+                applied_at:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2026-09-26T21:48:34'
+                  nullable: true
+                job_url:
+                  type: string
+                  description: 'Must be a valid URL. Must not be greater than 2048 characters.'
+                  example: 'http://www.okuneva.com/fugiat-sunt-nihil-accusantium-harum-mollitia.html'
+                  nullable: true
+                notes:
+                  type: string
+                  description: 'Must not be greater than 5000 characters.'
+                  example: k
+                  nullable: true
+              required:
+                - company_id
+                - title
+                - priority
+                - status
+  '/api/job-applications/{id}':
+    get:
+      summary: 応募詳細取得
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 求人応募管理
+    put:
+      summary: 応募基本情報更新
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 求人応募管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                priority:
+                  type: string
+                  description: ''
+                  example: HIGH
+                  enum:
+                    - HIGH
+                    - MEDIUM
+                    - LOW
+                job_url:
+                  type: string
+                  description: 'Must be a valid URL. Must not be greater than 2048 characters.'
+                  example: 'http://bailey.com/'
+                  nullable: true
+                notes:
+                  type: string
+                  description: 'Must not be greater than 5000 characters.'
+                  example: m
+                  nullable: true
+                channel_type:
+                  type: string
+                  description: ''
+                  example: OTHER
+                  enum:
+                    - DIRECT
+                    - AGENT
+                    - MEDIA
+                    - REFERRAL
+                    - OTHER
+                  nullable: true
+                channel_detail_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: i
+                  nullable: true
+                applied_at:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2026-09-26T21:48:34'
+                  nullable: true
+              required:
+                - title
+                - priority
+    delete:
+      summary: 応募削除
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 求人応募管理
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the job application.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/job-applications/{id}/advance-status':
+    post:
+      summary: ステータス順当進行
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 求人応募管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to_status:
+                  type: string
+                  description: ''
+                  example: DOCUMENT_SCREENING
+                  enum:
+                    - INTERESTED
+                    - CASUAL_INTERVIEW
+                    - DOCUMENT_SCREENING
+                    - INTERVIEW_ADJUSTING
+                    - INTERVIEW_IN_PROGRESS
+                    - OFFERED
+                    - ACCEPTED
+                    - REJECTED
+                    - WITHDRAWN
+                    - SKIPPED
+                channel_type:
+                  type: string
+                  description: ''
+                  example: MEDIA
+                  enum:
+                    - DIRECT
+                    - AGENT
+                    - MEDIA
+                    - REFERRAL
+                    - OTHER
+                  nullable: true
+                channel_detail_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: true
+                applied_at:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2026-09-26T21:48:34'
+                  nullable: true
+              required:
+                - to_status
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the job application.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/job-applications/{id}/correct-status':
+    post:
+      summary: ステータス誤入力訂正
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 求人応募管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to_status:
+                  type: string
+                  description: ''
+                  example: ACCEPTED
+                  enum:
+                    - INTERESTED
+                    - CASUAL_INTERVIEW
+                    - DOCUMENT_SCREENING
+                    - INTERVIEW_ADJUSTING
+                    - INTERVIEW_IN_PROGRESS
+                    - OFFERED
+                    - ACCEPTED
+                    - REJECTED
+                    - WITHDRAWN
+                    - SKIPPED
+                reason:
+                  type: string
+                  description: 'Must be at least 1 character. Must not be greater than 1000 characters.'
+                  example: b
+              required:
+                - to_status
+                - reason
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the job application.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/job-applications/{jobApplicationId}/selection-steps':
+    post:
+      summary: 選考ステップ追加
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 選考ステップ管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: ''
+                  example: FIRST_ROUND
+                  enum:
+                    - CASUAL_INTERVIEW
+                    - FIRST_ROUND
+                    - SECOND_ROUND
+                    - FINAL_ROUND
+                    - CODING_TEST
+                    - OTHER
+                scheduled_at:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2026-09-26T21:48:34'
+                  nullable: true
+                location_or_url:
+                  type: string
+                  description: 'Must not be greater than 2048 characters.'
+                  example: 'http://www.bailey.biz/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html'
+                  nullable: true
+                interviewer_info:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: i
+                  nullable: true
+                prep_memo:
+                  type: string
+                  description: 'Must not be greater than 5000 characters.'
+                  example: k
+                  nullable: true
+              required:
+                - type
+    parameters:
+      -
+        in: path
+        name: jobApplicationId
+        description: ''
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/job-applications/{jobApplicationId}/selection-steps/{stepId}':
+    put:
+      summary: 選考ステップ更新
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 選考ステップ管理
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: ''
+                  example: FINAL_ROUND
+                  enum:
+                    - CASUAL_INTERVIEW
+                    - FIRST_ROUND
+                    - SECOND_ROUND
+                    - FINAL_ROUND
+                    - CODING_TEST
+                    - OTHER
+                  nullable: true
+                scheduled_at:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2026-09-26T21:48:34'
+                  nullable: true
+                location_or_url:
+                  type: string
+                  description: 'Must not be greater than 2048 characters.'
+                  example: 'http://www.bailey.biz/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html'
+                  nullable: true
+                interviewer_info:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: i
+                  nullable: true
+                prep_memo:
+                  type: string
+                  description: 'Must not be greater than 5000 characters.'
+                  example: k
+                  nullable: true
+                review_memo:
+                  type: string
+                  description: 'Must not be greater than 5000 characters.'
+                  example: h
+                  nullable: true
+                result:
+                  type: string
+                  description: ''
+                  example: PENDING
+                  enum:
+                    - PENDING
+                    - PASSED
+                    - FAILED
+                    - NOT_APPLICABLE
+                  nullable: true
+    delete:
+      summary: 選考ステップ削除
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 選考ステップ管理
+    parameters:
+      -
+        in: path
+        name: jobApplicationId
+        description: ''
+        example: architecto
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: stepId
+        description: ''
+        example: architecto
+        required: true
+        schema:
+          type: string

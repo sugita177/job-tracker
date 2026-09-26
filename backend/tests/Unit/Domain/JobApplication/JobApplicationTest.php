@@ -10,6 +10,7 @@ use App\Domain\JobApplication\ValueObjects\ApplicationChannel;
 use App\Domain\JobApplication\ValueObjects\ApplicationStatus;
 use App\Domain\JobApplication\ValueObjects\HistoryType;
 use App\Domain\JobApplication\ValueObjects\Priority;
+use App\Domain\JobApplication\ValueObjects\StepResult;
 use App\Domain\JobApplication\ValueObjects\StepType;
 
 describe('JobApplication 集約ルート', function () {
@@ -189,5 +190,151 @@ describe('JobApplication 集約ルート', function () {
         // 例外発生後も、ステータスは REJECTED のままであり、履歴も追加されていないことを検証
         expect($jobApplication->currentStatus)->toBe(ApplicationStatus::REJECTED)
             ->and($jobApplication->statusHistories)->toBeEmpty();
+    });
+
+    test('createInterested で検討中エンティティを安全に生成できる', function () {
+        $channel = ApplicationChannel::media('媒体名');
+        $application = JobApplication::createInterested(
+            userId: 1,
+            companyId: 10,
+            title: 'フルスタックエンジニア',
+            priority: Priority::HIGH,
+            channel: $channel,
+            jobUrl: 'https://example.com/job/1',
+            notes: '気になっているポジション',
+        );
+
+        expect($application->currentStatus)->toBe(ApplicationStatus::INTERESTED)
+            ->and($application->channel)->toBe($channel)
+            ->and($application->appliedAt)->toBeNull()
+            ->and($application->statusHistories)->toBeEmpty();
+    });
+
+    test('createInterested でタイトルが空文字の場合は InvalidArgumentException がスローされる', function () {
+        expect(fn () => JobApplication::createInterested(
+            userId: 1,
+            companyId: 10,
+            title: '   ',
+        ))->toThrow(InvalidArgumentException::class, '求人タイトルは必須です。');
+    });
+
+    test('createApplied で応募済エンティティが生成され、初期履歴が自動記録される', function () {
+        $channel = ApplicationChannel::direct();
+        $appliedAt = new DateTimeImmutable('2026-10-01 10:00:00');
+
+        $application = JobApplication::createApplied(
+            userId: 1,
+            companyId: 10,
+            title: 'リードエンジニア',
+            priority: Priority::HIGH,
+            channel: $channel,
+            appliedAt: $appliedAt,
+        );
+
+        expect($application->currentStatus)->toBe(ApplicationStatus::DOCUMENT_SCREENING)
+            ->and($application->channel)->toBe($channel)
+            ->and($application->appliedAt)->toBe($appliedAt)
+            ->and($application->statusHistories)->toHaveCount(1);
+
+        $history = $application->statusHistories[0];
+        expect($history->fromStatus)->toBe(ApplicationStatus::INTERESTED)
+            ->and($history->toStatus)->toBe(ApplicationStatus::DOCUMENT_SCREENING)
+            ->and($history->type)->toBe(HistoryType::TRANSITION)
+            ->and($history->changedAt)->toBe($appliedAt);
+    });
+
+    test('update で求人の基本情報および媒体を正しく更新できる', function () {
+        $application = JobApplication::createInterested(
+            userId: 1,
+            companyId: 10,
+            title: '変更前タイトル',
+        );
+
+        $newChannel = ApplicationChannel::agent('エージェントA');
+        $application->update(
+            title: '変更後タイトル',
+            priority: Priority::LOW,
+            jobUrl: 'https://example.com/updated',
+            notes: '更新後メモ',
+            channel: $newChannel,
+        );
+
+        expect($application->title)->toBe('変更後タイトル')
+            ->and($application->priority)->toBe(Priority::LOW)
+            ->and($application->jobUrl)->toBe('https://example.com/updated')
+            ->and($application->notes)->toBe('更新後メモ')
+            ->and($application->channel)->toBe($newChannel);
+    });
+
+    test('update で検討中ステータスの求人に応募日を設定しようとすると InvalidArgumentException がスローされる', function () {
+        $application = JobApplication::createInterested(
+            userId: 1,
+            companyId: 10,
+            title: '検討中求人',
+        );
+
+        $appliedAt = new DateTimeImmutable('2026-10-05');
+
+        expect(fn () => $application->update(
+            title: '検討中求人',
+            priority: Priority::MEDIUM,
+            appliedAt: $appliedAt,
+        ))->toThrow(InvalidArgumentException::class, '検討中ステータスの求人に応募日を設定することはできません。');
+    });
+
+    test('JobApplication 集約ルート → 選考ステップの日程変更、結果記録、事前メモ更新ができる', function () {
+        $app = JobApplication::createApplied(
+            userId: 1,
+            companyId: 1,
+            title: 'バックエンドエンジニア',
+            priority: Priority::HIGH,
+            channel: ApplicationChannel::direct(),
+            appliedAt: new DateTimeImmutable('2026-03-01 10:00:00'),
+        );
+
+        $step = new SelectionStep(
+            type: StepType::FIRST_ROUND,
+            scheduledAt: new DateTimeImmutable('2026-03-10 14:00:00'),
+            id: 100,
+        );
+        $app->addSelectionStep($step);
+
+        // 1. 日程のリスケジュール
+        $app->rescheduleSelectionStep(100, new DateTimeImmutable('2026-03-12 15:00:00'), 'https://zoom.us/j/123');
+        expect($step->scheduledAt?->format('Y-m-d H:i:s'))->toBe('2026-03-12 15:00:00')
+            ->and($step->locationOrUrl)->toBe('https://zoom.us/j/123');
+
+        // 2. 事前準備情報の更新
+        $app->updateStepPreparation(100, interviewerInfo: 'CTO', prepMemo: '質問準備');
+        expect($step->interviewerInfo)->toBe('CTO')
+            ->and($step->prepMemo)->toBe('質問準備');
+
+        // 3. 結果と振り返りの記録
+        $app->recordStepReview(100, '好感触だった', StepResult::PASSED);
+        expect($step->reviewMemo)->toBe('好感触だった')
+            ->and($step->result)->toBe(StepResult::PASSED);
+    });
+
+    test('JobApplication 集約ルート → removeSelectionStep で指定ステップを削除できる', function () {
+        $app = JobApplication::createApplied(
+            userId: 1,
+            companyId: 1,
+            title: 'バックエンドエンジニア',
+            priority: Priority::HIGH,
+            channel: ApplicationChannel::direct(),
+            appliedAt: new DateTimeImmutable('2026-03-01 10:00:00'),
+        );
+
+        $step1 = new SelectionStep(type: StepType::FIRST_ROUND, scheduledAt: null, id: 101);
+        $step2 = new SelectionStep(type: StepType::SECOND_ROUND, scheduledAt: null, id: 102);
+        $app->addSelectionStep($step1);
+        $app->addSelectionStep($step2);
+
+        expect($app->steps)->toHaveCount(2);
+
+        $app->removeSelectionStep(101);
+
+        expect($app->steps)->toHaveCount(1)
+            ->and($app->steps[0]->id)->toBe(102);
     });
 });
