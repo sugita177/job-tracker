@@ -190,4 +190,94 @@ describe('JobApplication 集約ルート', function () {
         expect($jobApplication->currentStatus)->toBe(ApplicationStatus::REJECTED)
             ->and($jobApplication->statusHistories)->toBeEmpty();
     });
+
+    test('createInterested で検討中エンティティを安全に生成できる', function () {
+        $channel = ApplicationChannel::media('媒体名');
+        $application = JobApplication::createInterested(
+            userId: 1,
+            companyId: 10,
+            title: 'フルスタックエンジニア',
+            priority: Priority::HIGH,
+            channel: $channel,
+            jobUrl: 'https://example.com/job/1',
+            notes: '気になっているポジション',
+        );
+
+        expect($application->currentStatus)->toBe(ApplicationStatus::INTERESTED)
+            ->and($application->channel)->toBe($channel)
+            ->and($application->appliedAt)->toBeNull()
+            ->and($application->statusHistories)->toBeEmpty();
+    });
+
+    test('createInterested でタイトルが空文字の場合は InvalidArgumentException がスローされる', function () {
+        expect(fn () => JobApplication::createInterested(
+            userId: 1,
+            companyId: 10,
+            title: '   ',
+        ))->toThrow(InvalidArgumentException::class, '求人タイトルは必須です。');
+    });
+
+    test('createApplied で応募済エンティティが生成され、初期履歴が自動記録される', function () {
+        $channel = ApplicationChannel::direct();
+        $appliedAt = new DateTimeImmutable('2026-10-01 10:00:00');
+
+        $application = JobApplication::createApplied(
+            userId: 1,
+            companyId: 10,
+            title: 'リードエンジニア',
+            priority: Priority::HIGH,
+            channel: $channel,
+            appliedAt: $appliedAt,
+        );
+
+        expect($application->currentStatus)->toBe(ApplicationStatus::DOCUMENT_SCREENING)
+            ->and($application->channel)->toBe($channel)
+            ->and($application->appliedAt)->toBe($appliedAt)
+            ->and($application->statusHistories)->toHaveCount(1);
+
+        $history = $application->statusHistories[0];
+        expect($history->fromStatus)->toBe(ApplicationStatus::INTERESTED)
+            ->and($history->toStatus)->toBe(ApplicationStatus::DOCUMENT_SCREENING)
+            ->and($history->type)->toBe(HistoryType::TRANSITION)
+            ->and($history->changedAt)->toBe($appliedAt);
+    });
+
+    test('update で求人の基本情報および媒体を正しく更新できる', function () {
+        $application = JobApplication::createInterested(
+            userId: 1,
+            companyId: 10,
+            title: '変更前タイトル',
+        );
+
+        $newChannel = ApplicationChannel::agent('エージェントA');
+        $application->update(
+            title: '変更後タイトル',
+            priority: Priority::LOW,
+            jobUrl: 'https://example.com/updated',
+            notes: '更新後メモ',
+            channel: $newChannel,
+        );
+
+        expect($application->title)->toBe('変更後タイトル')
+            ->and($application->priority)->toBe(Priority::LOW)
+            ->and($application->jobUrl)->toBe('https://example.com/updated')
+            ->and($application->notes)->toBe('更新後メモ')
+            ->and($application->channel)->toBe($newChannel);
+    });
+
+    test('update で検討中ステータスの求人に応募日を設定しようとすると InvalidArgumentException がスローされる', function () {
+        $application = JobApplication::createInterested(
+            userId: 1,
+            companyId: 10,
+            title: '検討中求人',
+        );
+
+        $appliedAt = new DateTimeImmutable('2026-10-05');
+
+        expect(fn () => $application->update(
+            title: '検討中求人',
+            priority: Priority::MEDIUM,
+            appliedAt: $appliedAt,
+        ))->toThrow(InvalidArgumentException::class, '検討中ステータスの求人に応募日を設定することはできません。');
+    });
 });
