@@ -11,7 +11,7 @@
 | [01. ドメイン層の実装とTDD](01_domain_layer.md) | Phase 1 (Domain Layer) | ・Pest の `with()` データプロバイダとクラス評価ライフサイクル<br>・PHP 8 `match` 式の構文特性（文と式の違い・末尾セミコロン）<br>・PHP標準 `DomainException` を継承する設計的根拠<br>・PHPStan Level 8 における型付けの厳格性<br>・緩やかな比較 (`!=`) の排除と型推論<br>・PHP 8.4+ 非対称可視性 (`public private(set)`) |
 | [02. インフラ層・DB設計・リポジトリ](02_infrastructure_db.md) | Phase 2 (Infrastructure) | ・Eloquent とドメインエンティティの相互マッピングと責務分離<br>・型ナローイング（Type Narrowing）と `assert()` の活用<br>・Eloquent 日時キャストと PHPDoc 共変・反変制約<br>・Pest による DB 統合テスト設計（`assertDatabaseHas` 関数スタイル）<br>・集約の整合性とトランザクション戦略（単一 vs 複数テーブル）<br>・Laravel Collection の `list<T>` 型推論と `array_values()`<br>・`ServiceProvider::$bindings` による宣言的 DI バインディング |
 | [03. ユースケース・RESTful API・バリデーション](03_api_usecases.md) | Phase 3 (API & UseCase) | ・多重防御（Defense in Depth）によるテナント分離セキュリティ<br>・FormRequest のライフサイクルとデータ取得設計（`validated` vs `input` vs `filled`）<br>・ドメイン例外の透過的 HTTP マッピング（Laravel 11+ `bootstrap/app.php`）<br>・サイレントフォールバックの排除（フェイルファスト原則）<br>・API レスポンスの日時表現と標準規格（`DateTimeImmutable::ATOM`）<br>・PHPStan Level 8 における `??` と `?->` の重複検証<br>・デッドコード検出（`unused-public`）と静的解析運用設計<br>・集約配下の子エンティティ（`SelectionStep`）整合性保護と将来課題<br>・Scribe による Single Source of Truth なドキュメント生成と OpenAPI スキーマ駆動開発 |
-| `04_auth_security.md` | Phase 4 (Auth & Security) | *(準備中: Sanctum SPA Cookie認証・Gate認可)* |
+| [04. 認証基盤 & セキュリティ](04_auth_security.md) | Phase 4 (Auth & Security) | ・Sanctum SPA Cookie 認証の採用理由と XSS 防御（httpOnly）<br>・アカウント列挙攻撃防止と ValidationException の `email` キー統一<br>・Sanctum の Stateful 判定仕様とテスト時の `Referer` ヘッダー注入<br>・テスト環境のインメモリ・ガードキャッシュ（状態リーク）と `Auth::forgetGuards()`<br>・Gate vs Policy vs 404隠匿の認可トレードオフと将来TODO |
 | `05_frontend_react.md` | Phase 5 (Frontend SPA) | *(準備中: React 18+・TypeScript・Vite・型安全APIクライアント)* |
 
 ---
@@ -50,6 +50,11 @@
   - サイレントフォールバックの排除（フェイルファスト原則）: [03_api_usecases.md#4-サイレントフォールバックの排除フェイルファスト原則](03_api_usecases.md#4-サイレントフォールバックの排除フェイルファスト原則)
   - 選考ステップ整合性保護と今後の課題【未実装 / Phase 2 バックログ】: [03_api_usecases.md#8-集約配下の子エンティティselectionstepの整合性保護と今後の課題-phase-2-バックログ](03_api_usecases.md#8-集約配下の子エンティティselectionstepの整合性保護と今後の課題-phase-2-バックログ)
   - Scribe による Single Source of Truth なドキュメント自動生成と OpenAPI スキーマ駆動開発: [03_api_usecases.md#9-scribe-による-single-source-of-truth-なドキュメント自動生成と-openapi-スキーマ駆動開発](03_api_usecases.md#9-scribe-による-single-source-of-truth-なドキュメント自動生成と-openapi-スキーマ駆動開発)
+  - Sanctum SPA Cookie 認証と XSS 防御: [04_auth_security.md#1-bearer-token-ではなく-spa-cookie-認証を採用した理由](04_auth_security.md#1-bearer-token-ではなく-spa-cookie-認証を採用した理由)
+  - アカウント列挙攻撃の防止と `email` キー統一: [04_auth_security.md#2-validationexception-でエラーキーを-email-に統一する理由](04_auth_security.md#2-validationexception-でエラーキーを-email-に統一する理由)
+  - Sanctum Stateful 判定と Referer ヘッダー: [04_auth_security.md#3-テスト課題①-sanctum-の-stateful-判定と-referer-ヘッダー](04_auth_security.md#3-テスト課題①-sanctum-の-stateful-判定と-referer-ヘッダー)
+  - ガードキャッシュと状態リーク（`Auth::forgetGuards()`）: [04_auth_security.md#4-テスト課題②-assertguestweb-と-authforgetguards](04_auth_security.md#4-テスト課題②-assertguestweb-と-authforgetguards)
+  - 認可トレードオフ（Gate vs Policy vs 404隠匿）と将来TODO: [04_auth_security.md#5-認可設計のトレードオフと将来todo](04_auth_security.md#5-認可設計のトレードオフと将来todo)
 - **ドキュメンテーション (Markdown / Mermaid)**
   - Mermaid パーサーの記号エスケープ: [01_domain_layer.md#8-github-mermaid-パーサーにおける特殊記号括弧のエスケープ規則](01_domain_layer.md#8-github-mermaid-パーサーにおける特殊記号括弧のエスケープ規則)
 

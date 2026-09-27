@@ -118,8 +118,10 @@ flowchart TD
    - 各リソース操作（Show, Update, Delete）の直前で Policy（例: `JobApplicationPolicy@update`）を実行し、`$user->id === $jobApplication->userId` を検証。
 3. **Layer 3: テナントコンテキストの明示（UseCase引数）**
    - UseCaseの実行引数には、Controllerがセッションから取得した `UserId` を必ず渡す。
-4. **Layer 4: クエリの強制スコープ（Repository層）**
-   - リポジトリの検索・更新メソッドは必ず `userId` を検索条件に含める（例: `findByIdAndUserId(JobApplicationId $id, UserId $userId)`）。
+4. **Layer 4: クエリの強制スコープ（Repository層・404隠匿）**
+   - リポジトリの検索・更新メソッドは必ず `userId` を検索条件に含める（例: `findById(int $id, int $userId)`）。
+   - 他ユーザーのリソースIDが指定された場合、あえて `403 Forbidden` ではなく `404 Not Found` を返すことで、他人のリソースの存在自体を悟らせない（ID推測・情報漏洩の防止）。
+   - **将来TODO (Phase 2)**: 組織・チーム共有機能や管理者ロール導入時に、Laravel Policy（`CompanyPolicy`, `JobApplicationPolicy`）による明示的認可レイヤーを追加予定。現状のシングルユーザーMVPではリポジトリ層でのテナント隔離で十分かつ安全と判断。
 
 ---
 
