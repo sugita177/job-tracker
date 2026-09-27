@@ -70,7 +70,7 @@ final class JobApplicationRepository implements JobApplicationRepositoryInterfac
         return DB::transaction(function () use ($jobApplication): JobApplication {
             $model = $jobApplication->id !== null
                 ? JobApplicationModel::query()->where('id', $jobApplication->id)->where('user_id', $jobApplication->userId)->firstOrFail()
-                : new JobApplicationModel();
+                : new JobApplicationModel;
 
             $model->user_id = $jobApplication->userId;
             $model->company_id = $jobApplication->companyId;
@@ -103,7 +103,7 @@ final class JobApplicationRepository implements JobApplicationRepositoryInterfac
             foreach ($jobApplication->steps as $step) {
                 $stepModel = $step->id !== null
                     ? SelectionStepModel::query()->where('id', $step->id)->where('job_application_id', $jobApplicationId)->firstOrFail()
-                    : new SelectionStepModel();
+                    : new SelectionStepModel;
 
                 $stepModel->job_application_id = $jobApplicationId;
                 $stepModel->type = $step->type->value;
@@ -119,13 +119,13 @@ final class JobApplicationRepository implements JobApplicationRepositoryInterfac
             // StatusHistory の保存（履歴は改ざん不可の追記のみ）
             foreach ($jobApplication->statusHistories as $history) {
                 if ($history->id === null) {
-                    $historyModel = new StatusHistoryModel();
+                    $historyModel = new StatusHistoryModel;
                     $historyModel->job_application_id = $jobApplicationId;
                     $historyModel->from_status = $history->fromStatus->value;
                     $historyModel->to_status = $history->toStatus->value;
                     $historyModel->type = $history->type->value;
                     $historyModel->reason = $history->reason;
-                    $historyModel->changed_at = $history->changedAt ?? new DateTimeImmutable();
+                    $historyModel->changed_at = $history->changedAt ?? new DateTimeImmutable;
                     $historyModel->save();
                 }
             }

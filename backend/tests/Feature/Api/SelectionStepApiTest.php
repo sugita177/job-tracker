@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\Company\Entities\Company;
+use App\Domain\Company\Repositories\CompanyRepositoryInterface;
 use App\Domain\JobApplication\Entities\JobApplication;
 use App\Domain\JobApplication\Entities\SelectionStep;
 use App\Domain\JobApplication\Repositories\JobApplicationRepositoryInterface;
@@ -9,10 +11,9 @@ use App\Domain\JobApplication\ValueObjects\ApplicationChannel;
 use App\Domain\JobApplication\ValueObjects\Priority;
 use App\Domain\JobApplication\ValueObjects\StepResult;
 use App\Domain\JobApplication\ValueObjects\StepType;
-use App\Domain\Company\Entities\Company;
-use App\Domain\Company\Repositories\CompanyRepositoryInterface;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;

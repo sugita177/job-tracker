@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $job_application_id
  * @property string $type
- * @property \DateTimeImmutable|\Carbon\CarbonImmutable|null $scheduled_at
+ * @property \DateTimeImmutable|CarbonImmutable|null $scheduled_at
  * @property string|null $location_or_url
  * @property string|null $interviewer_info
  * @property string|null $prep_memo

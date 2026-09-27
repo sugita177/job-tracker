@@ -14,6 +14,7 @@ use App\Infrastructure\Persistence\Repositories\CompanyRepository;
 use App\Infrastructure\Persistence\Repositories\JobApplicationRepository;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
@@ -22,8 +23,8 @@ uses(RefreshDatabase::class);
 describe('JobApplicationRepository (統合テスト)', function () {
     test('新規の JobApplication を保存でき、子エンティティ steps や statusHistories も連動して永続化される', function () {
         $user = User::factory()->create();
-        $companyRepo = new CompanyRepository();
-        $jobRepo = new JobApplicationRepository();
+        $companyRepo = new CompanyRepository;
+        $jobRepo = new JobApplicationRepository;
 
         $company = $companyRepo->save(new Company(userId: $user->id, name: 'テスト企業'));
         assert($company->id !== null);
@@ -77,8 +78,8 @@ describe('JobApplicationRepository (統合テスト)', function () {
     test('findById で子エンティティを含めて集約が完全復元される（他ユーザーには取得不可）', function () {
         $userA = User::factory()->create();
         $userB = User::factory()->create();
-        $companyRepo = new CompanyRepository();
-        $jobRepo = new JobApplicationRepository();
+        $companyRepo = new CompanyRepository;
+        $jobRepo = new JobApplicationRepository;
 
         $companyA = $companyRepo->save(new Company(userId: $userA->id, name: '企業A'));
         assert($companyA->id !== null);
@@ -115,8 +116,8 @@ describe('JobApplicationRepository (統合テスト)', function () {
 
     test('listByUserId でステータス絞り込みができる', function () {
         $user = User::factory()->create();
-        $companyRepo = new CompanyRepository();
-        $jobRepo = new JobApplicationRepository();
+        $companyRepo = new CompanyRepository;
+        $jobRepo = new JobApplicationRepository;
 
         $company = $companyRepo->save(new Company(userId: $user->id, name: '企業'));
         assert($company->id !== null);
@@ -144,10 +145,10 @@ describe('JobApplicationRepository (統合テスト)', function () {
             ->and($interestedOnly[0]->title)->toBe('求人1');
     });
 
-        test('delete で求人応募を削除すると、CASCADE制約により配下の面談日程や履歴も連動削除される', function () {
+    test('delete で求人応募を削除すると、CASCADE制約により配下の面談日程や履歴も連動削除される', function () {
         $user = User::factory()->create();
-        $companyRepo = new CompanyRepository();
-        $jobRepo = new JobApplicationRepository();
+        $companyRepo = new CompanyRepository;
+        $jobRepo = new JobApplicationRepository;
 
         $company = $companyRepo->save(new Company(userId: $user->id, name: '企業'));
         assert($company->id !== null);
@@ -165,7 +166,7 @@ describe('JobApplicationRepository (統合テスト)', function () {
         // 2. 面談ステップを追加（SelectionStep が生成される）
         $jobApp->addSelectionStep(new SelectionStep(
             type: StepType::CASUAL_INTERVIEW,
-            scheduledAt: new DateTimeImmutable(),
+            scheduledAt: new DateTimeImmutable,
         ));
 
         // 3. 集約ルートを保存（親・steps・histories がDBに入る）
@@ -184,8 +185,8 @@ describe('JobApplicationRepository (統合テスト)', function () {
     test('JobApplicationRepository (統合テスト) → 集約を通した SelectionStep の更新と削除が DB に同期される', function () {
         /** @var User $user */
         $user = User::factory()->create();
-        $companyRepo = new CompanyRepository();
-        $jobRepo = new JobApplicationRepository();
+        $companyRepo = new CompanyRepository;
+        $jobRepo = new JobApplicationRepository;
 
         $company = $companyRepo->save(new Company(userId: $user->id, name: 'テスト企業'));
         assert($company->id !== null);

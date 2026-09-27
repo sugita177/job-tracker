@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $channel_type
  * @property string|null $channel_detail_name
  * @property string $current_status
- * @property \DateTimeImmutable|\Carbon\CarbonImmutable|null $applied_at
+ * @property \DateTimeImmutable|CarbonImmutable|null $applied_at
  * @property string|null $job_url
  * @property string|null $notes
  */

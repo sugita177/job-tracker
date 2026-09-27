@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertAuthenticated;
 use function Pest\Laravel\assertAuthenticatedAs;
@@ -12,8 +14,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertGuest;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
+use function Pest\Laravel\withHeader;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    withHeader('referer', 'http://localhost:5173');
+});
 
 describe('Auth API (ユーザー認証 & セッション管理)', function () {
     test('POST /api/auth/register で新規ユーザーを登録でき、自動ログインされること', function () {
@@ -116,12 +123,29 @@ describe('Auth API (ユーザー認証 & セッション管理)', function () {
     });
 
     test('POST /api/auth/logout でログアウトでき、セッションが無効化されること', function () {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'password' => Hash::make('password123'),
+        ]);
 
-        $response = actingAs($user)->postJson('/api/auth/logout');
+        // 1. 実際にログインAPIを呼んでセッションを確立
+        postJson('/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ]);
 
+        assertAuthenticatedAs($user);
+
+        // 2. ログアウトを実行
+        $response = postJson('/api/auth/logout');
         $response->assertNoContent();
 
-        assertGuest();
+        assertGuest('web');
+
+        // テスト環境におけるインメモリのガードキャッシュをクリア
+        Auth::forgetGuards();
+
+        // 3. ログアウト後に、Sanctum で保護された API を叩くと 401 になる
+        $afterResponse = getJson('/api/auth/user');
+        $afterResponse->assertUnauthorized();
     });
 });

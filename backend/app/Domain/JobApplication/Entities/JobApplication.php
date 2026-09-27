@@ -201,8 +201,8 @@ final class JobApplication
     /**
      * 求人情報を更新する
      *
-     * @param ApplicationChannel|null $channel 媒体はいつでも変更可能
-     * @param DateTimeImmutable|null $appliedAt 応募日は検討中以外（応募済）の場合のみ変更可能
+     * @param  ApplicationChannel|null  $channel  媒体はいつでも変更可能
+     * @param  DateTimeImmutable|null  $appliedAt  応募日は検討中以外（応募済）の場合のみ変更可能
      */
     public function update(
         string $title,

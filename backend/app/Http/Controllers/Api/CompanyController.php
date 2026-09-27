@@ -32,7 +32,7 @@ final class CompanyController extends Controller
      */
     public function index(Request $request, ListCompaniesUseCase $useCase): AnonymousResourceCollection
     {
-        $userId = $this->currentUserId($request);;
+        $userId = $this->currentUserId($request);
         $companies = $useCase->execute($userId);
 
         return CompanyResource::collection($companies);
@@ -64,7 +64,7 @@ final class CompanyController extends Controller
      */
     public function show(Request $request, int $id, GetCompanyUseCase $useCase): CompanyResource
     {
-        $userId = $this->currentUserId($request);;
+        $userId = $this->currentUserId($request);
         $company = $useCase->execute($id, $userId);
 
         if ($company === null) {
@@ -79,7 +79,7 @@ final class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, int $id, UpdateCompanyUseCase $useCase): CompanyResource
     {
-        $userId = $this->currentUserId($request);;
+        $userId = $this->currentUserId($request);
 
         $input = new UpdateCompanyInput(
             id: $id,
@@ -103,7 +103,7 @@ final class CompanyController extends Controller
      */
     public function destroy(Request $request, int $id, DeleteCompanyUseCase $useCase): Response
     {
-        $userId = $this->currentUserId($request);;
+        $userId = $this->currentUserId($request);
         $deleted = $useCase->execute($id, $userId);
 
         if (! $deleted) {

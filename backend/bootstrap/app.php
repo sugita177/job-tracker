@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         // ドメイン不変条件・状態遷移違反などの DomainException を 422 JSON に自動マッピング
-        $exceptions->render(function (\DomainException $e, Request $request) {
+        $exceptions->render(function (DomainException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => $e->getMessage(),
