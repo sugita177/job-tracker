@@ -6,6 +6,7 @@ use App\Domain\Company\Entities\Company;
 use App\Infrastructure\Persistence\Repositories\CompanyRepository;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
@@ -14,7 +15,7 @@ uses(RefreshDatabase::class);
 describe('CompanyRepository (統合テスト)', function () {
     test('企業エンティティを新規保存でき、自動採番されたID付きで返される', function () {
         $user = User::factory()->create();
-        $repository = new CompanyRepository();
+        $repository = new CompanyRepository;
 
         $company = new Company(
             userId: $user->id,
@@ -39,7 +40,7 @@ describe('CompanyRepository (統合テスト)', function () {
 
     test('既存の企業エンティティを更新できる', function () {
         $user = User::factory()->create();
-        $repository = new CompanyRepository();
+        $repository = new CompanyRepository;
 
         $company = $repository->save(new Company(
             userId: $user->id,
@@ -63,7 +64,7 @@ describe('CompanyRepository (統合テスト)', function () {
     test('findById で自分自身の企業は取得できるが、他ユーザーの企業は null が返る（マルチテナント保護）', function () {
         $userA = User::factory()->create();
         $userB = User::factory()->create();
-        $repository = new CompanyRepository();
+        $repository = new CompanyRepository;
 
         $companyA = $repository->save(new Company(
             userId: $userA->id,
@@ -85,7 +86,7 @@ describe('CompanyRepository (統合テスト)', function () {
     test('listByUserId で指定ユーザーの企業一覧のみを取得できる', function () {
         $userA = User::factory()->create();
         $userB = User::factory()->create();
-        $repository = new CompanyRepository();
+        $repository = new CompanyRepository;
 
         $repository->save(new Company(userId: $userA->id, name: 'A-1社'));
         $repository->save(new Company(userId: $userA->id, name: 'A-2社'));
@@ -100,7 +101,7 @@ describe('CompanyRepository (統合テスト)', function () {
     test('delete で企業を削除できる（他ユーザーの企業は削除できない）', function () {
         $userA = User::factory()->create();
         $userB = User::factory()->create();
-        $repository = new CompanyRepository();
+        $repository = new CompanyRepository;
 
         $companyA = $repository->save(new Company(userId: $userA->id, name: '削除対象社'));
         assert($companyA->id !== null);

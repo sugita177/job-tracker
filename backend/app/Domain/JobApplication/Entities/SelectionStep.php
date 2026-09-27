@@ -61,5 +61,4 @@ final class SelectionStep
         $this->interviewerInfo = $interviewerInfo !== null ? trim($interviewerInfo) : null;
         $this->prepMemo = $prepMemo !== null ? trim($prepMemo) : null;
     }
-
 }

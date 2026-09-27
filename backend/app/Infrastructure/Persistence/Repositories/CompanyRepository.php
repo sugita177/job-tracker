@@ -45,10 +45,10 @@ final class CompanyRepository implements CompanyRepositoryInterface
     public function save(Company $company): Company
     {
         assert($company->userId > 0);
-        
+
         $model = $company->id !== null
             ? CompanyModel::query()->where('id', $company->id)->where('user_id', $company->userId)->firstOrFail()
-            : new CompanyModel();
+            : new CompanyModel;
 
         $model->user_id = $company->userId;
         $model->name = $company->name;

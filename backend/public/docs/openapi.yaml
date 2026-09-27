@@ -14,6 +14,9 @@ tags:
     name: 求人応募管理
     description: "\n求人ポジションの応募情報、優先度、ステータス遷移（順遷移・誤入力訂正）を管理する API です。"
   -
+    name: 認証・アカウント管理
+    description: "\nユーザー登録、セッションログイン、ログアウト、および現在ログイン中ユーザーのプロファイル取得を行います。"
+  -
     name: 選考ステップ管理
     description: "\n各求人応募に紐づく面談・面接（カジュアル面談、一次面接、二次面接、最終面接等）の日程・メモ・結果を管理する API です。"
 components:
@@ -209,7 +212,7 @@ paths:
                 channel_type:
                   type: string
                   description: ''
-                  example: OTHER
+                  example: DIRECT
                   enum:
                     - DIRECT
                     - AGENT
@@ -225,7 +228,7 @@ paths:
                 applied_at:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2026-09-26T21:48:34'
+                  example: '2026-09-27T16:12:07'
                   nullable: true
                 job_url:
                   type: string
@@ -285,7 +288,7 @@ paths:
                 priority:
                   type: string
                   description: ''
-                  example: HIGH
+                  example: MEDIUM
                   enum:
                     - HIGH
                     - MEDIUM
@@ -303,7 +306,7 @@ paths:
                 channel_type:
                   type: string
                   description: ''
-                  example: OTHER
+                  example: DIRECT
                   enum:
                     - DIRECT
                     - AGENT
@@ -319,7 +322,7 @@ paths:
                 applied_at:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2026-09-26T21:48:34'
+                  example: '2026-09-27T16:12:07'
                   nullable: true
               required:
                 - title
@@ -360,7 +363,7 @@ paths:
                 to_status:
                   type: string
                   description: ''
-                  example: DOCUMENT_SCREENING
+                  example: OFFERED
                   enum:
                     - INTERESTED
                     - CASUAL_INTERVIEW
@@ -375,7 +378,7 @@ paths:
                 channel_type:
                   type: string
                   description: ''
-                  example: MEDIA
+                  example: REFERRAL
                   enum:
                     - DIRECT
                     - AGENT
@@ -391,7 +394,7 @@ paths:
                 applied_at:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2026-09-26T21:48:34'
+                  example: '2026-09-27T16:12:07'
                   nullable: true
               required:
                 - to_status
@@ -423,7 +426,7 @@ paths:
                 to_status:
                   type: string
                   description: ''
-                  example: ACCEPTED
+                  example: DOCUMENT_SCREENING
                   enum:
                     - INTERESTED
                     - CASUAL_INTERVIEW
@@ -451,6 +454,97 @@ paths:
         required: true
         schema:
           type: string
+  /api/auth/register:
+    post:
+      summary: 新規ユーザー登録
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 認証・アカウント管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: zbailey@example.net
+                password:
+                  type: string
+                  description: ''
+                  example: '|]|{+-'
+              required:
+                - name
+                - email
+                - password
+      security: []
+  /api/auth/login:
+    post:
+      summary: ログイン
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 認証・アカウント管理
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: gbailey@example.net
+                password:
+                  type: string
+                  description: ''
+                  example: '|]|{+-'
+              required:
+                - email
+                - password
+      security: []
+  /api/auth/user:
+    get:
+      summary: ログイン中ユーザー情報の取得
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 認証・アカウント管理
+  /api/auth/logout:
+    post:
+      summary: ログアウト
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 認証・アカウント管理
   '/api/job-applications/{jobApplicationId}/selection-steps':
     post:
       summary: 選考ステップ追加
@@ -470,7 +564,7 @@ paths:
                 type:
                   type: string
                   description: ''
-                  example: FIRST_ROUND
+                  example: CASUAL_INTERVIEW
                   enum:
                     - CASUAL_INTERVIEW
                     - FIRST_ROUND
@@ -481,7 +575,7 @@ paths:
                 scheduled_at:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2026-09-26T21:48:34'
+                  example: '2026-09-27T16:12:07'
                   nullable: true
                 location_or_url:
                   type: string
@@ -528,7 +622,7 @@ paths:
                 type:
                   type: string
                   description: ''
-                  example: FINAL_ROUND
+                  example: CASUAL_INTERVIEW
                   enum:
                     - CASUAL_INTERVIEW
                     - FIRST_ROUND
@@ -540,7 +634,7 @@ paths:
                 scheduled_at:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2026-09-26T21:48:34'
+                  example: '2026-09-27T16:12:07'
                   nullable: true
                 location_or_url:
                   type: string

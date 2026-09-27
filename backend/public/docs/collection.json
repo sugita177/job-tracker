@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "\u6c42\u4eba\u5fdc\u52df\u30fb\u9078\u8003\u30c8\u30e9\u30c3\u30ab\u30fc (Job Tracker) API Specification",
-        "_postman_id": "12841282-083c-489d-b3b7-5b9e3f3c89c7",
+        "_postman_id": "928e6c89-f5c8-4826-be51-265c2bb8a8ba",
         "description": "\u6c42\u4eba\u5fdc\u52df\u30fb\u9078\u8003\u30c8\u30e9\u30c3\u30ab\u30fc\u306e RESTful API \u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\u3002\u4f01\u696d\u60c5\u5831\u306e\u7ba1\u7406\u3001\u6c42\u4eba\u5fdc\u52df\u306e\u30e9\u30a4\u30d5\u30b5\u30a4\u30af\u30eb\uff08\u691c\u8a0e\u4e2d\u301c\u5185\u5b9a\u30fb\u627f\u8afe\uff09\u3001\u304a\u3088\u3073\u9762\u8ac7\u30fb\u9762\u63a5\uff08\u9078\u8003\u30b9\u30c6\u30c3\u30d7\uff09\u306e\u8a18\u9332\u3092\u7ba1\u7406\u3057\u307e\u3059\u3002",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -55,7 +55,11 @@
                                 },
                                 {
                                     "key": "access-control-allow-origin",
-                                    "value": "*"
+                                    "value": "http:\/\/localhost:5173"
+                                },
+                                {
+                                    "key": "access-control-allow-credentials",
+                                    "value": "true"
                                 }
                             ],
                             "code": 401,
@@ -136,7 +140,11 @@
                                 },
                                 {
                                     "key": "access-control-allow-origin",
-                                    "value": "*"
+                                    "value": "http:\/\/localhost:5173"
+                                },
+                                {
+                                    "key": "access-control-allow-credentials",
+                                    "value": "true"
                                 }
                             ],
                             "code": 401,
@@ -256,7 +264,11 @@
                                 },
                                 {
                                     "key": "access-control-allow-origin",
-                                    "value": "*"
+                                    "value": "http:\/\/localhost:5173"
+                                },
+                                {
+                                    "key": "access-control-allow-credentials",
+                                    "value": "true"
                                 }
                             ],
                             "code": 401,
@@ -287,7 +299,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"company_id\":16,\"title\":\"n\",\"priority\":\"MEDIUM\",\"status\":\"INTERESTED\",\"channel_type\":\"OTHER\",\"channel_detail_name\":\"g\",\"applied_at\":\"2026-09-26T21:48:34\",\"job_url\":\"http:\\\/\\\/www.okuneva.com\\\/fugiat-sunt-nihil-accusantium-harum-mollitia.html\",\"notes\":\"k\"}"
+                            "raw": "{\"company_id\":16,\"title\":\"n\",\"priority\":\"MEDIUM\",\"status\":\"INTERESTED\",\"channel_type\":\"DIRECT\",\"channel_detail_name\":\"g\",\"applied_at\":\"2026-09-27T16:12:07\",\"job_url\":\"http:\\\/\\\/www.okuneva.com\\\/fugiat-sunt-nihil-accusantium-harum-mollitia.html\",\"notes\":\"k\"}"
                         },
                         "description": ""
                     },
@@ -337,7 +349,11 @@
                                 },
                                 {
                                     "key": "access-control-allow-origin",
-                                    "value": "*"
+                                    "value": "http:\/\/localhost:5173"
+                                },
+                                {
+                                    "key": "access-control-allow-credentials",
+                                    "value": "true"
                                 }
                             ],
                             "code": 401,
@@ -376,7 +392,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"b\",\"priority\":\"HIGH\",\"job_url\":\"http:\\\/\\\/bailey.com\\\/\",\"notes\":\"m\",\"channel_type\":\"OTHER\",\"channel_detail_name\":\"i\",\"applied_at\":\"2026-09-26T21:48:34\"}"
+                            "raw": "{\"title\":\"b\",\"priority\":\"MEDIUM\",\"job_url\":\"http:\\\/\\\/bailey.com\\\/\",\"notes\":\"m\",\"channel_type\":\"DIRECT\",\"channel_detail_name\":\"i\",\"applied_at\":\"2026-09-27T16:12:07\"}"
                         },
                         "description": ""
                     },
@@ -445,7 +461,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"to_status\":\"DOCUMENT_SCREENING\",\"channel_type\":\"MEDIA\",\"channel_detail_name\":\"b\",\"applied_at\":\"2026-09-26T21:48:34\"}"
+                            "raw": "{\"to_status\":\"OFFERED\",\"channel_type\":\"REFERRAL\",\"channel_detail_name\":\"b\",\"applied_at\":\"2026-09-27T16:12:07\"}"
                         },
                         "description": ""
                     },
@@ -481,8 +497,150 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"to_status\":\"ACCEPTED\",\"reason\":\"b\"}"
+                            "raw": "{\"to_status\":\"DOCUMENT_SCREENING\",\"reason\":\"b\"}"
                         },
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u8a8d\u8a3c\u30fb\u30a2\u30ab\u30a6\u30f3\u30c8\u7ba1\u7406",
+            "description": "\n\u30e6\u30fc\u30b6\u30fc\u767b\u9332\u3001\u30bb\u30c3\u30b7\u30e7\u30f3\u30ed\u30b0\u30a4\u30f3\u3001\u30ed\u30b0\u30a2\u30a6\u30c8\u3001\u304a\u3088\u3073\u73fe\u5728\u30ed\u30b0\u30a4\u30f3\u4e2d\u30e6\u30fc\u30b6\u30fc\u306e\u30d7\u30ed\u30d5\u30a1\u30a4\u30eb\u53d6\u5f97\u3092\u884c\u3044\u307e\u3059\u3002",
+            "item": [
+                {
+                    "name": "\u65b0\u898f\u30e6\u30fc\u30b6\u30fc\u767b\u9332",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/register",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/register"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"b\",\"email\":\"zbailey@example.net\",\"password\":\"|]|{+-\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u30ed\u30b0\u30a4\u30f3",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/login",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/login"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"gbailey@example.net\",\"password\":\"|]|{+-\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u30ed\u30b0\u30a4\u30f3\u4e2d\u30e6\u30fc\u30b6\u30fc\u60c5\u5831\u306e\u53d6\u5f97",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/user",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/user"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "http:\/\/localhost:5173"
+                                },
+                                {
+                                    "key": "access-control-allow-credentials",
+                                    "value": "true"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u30ed\u30b0\u30a2\u30a6\u30c8",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/logout",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/logout"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
                         "description": ""
                     },
                     "response": []
@@ -523,7 +681,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"type\":\"FIRST_ROUND\",\"scheduled_at\":\"2026-09-26T21:48:34\",\"location_or_url\":\"http:\\\/\\\/www.bailey.biz\\\/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html\",\"interviewer_info\":\"i\",\"prep_memo\":\"k\"}"
+                            "raw": "{\"type\":\"CASUAL_INTERVIEW\",\"scheduled_at\":\"2026-09-27T16:12:07\",\"location_or_url\":\"http:\\\/\\\/www.bailey.biz\\\/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html\",\"interviewer_info\":\"i\",\"prep_memo\":\"k\"}"
                         },
                         "description": ""
                     },
@@ -565,7 +723,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"type\":\"FINAL_ROUND\",\"scheduled_at\":\"2026-09-26T21:48:34\",\"location_or_url\":\"http:\\\/\\\/www.bailey.biz\\\/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html\",\"interviewer_info\":\"i\",\"prep_memo\":\"k\",\"review_memo\":\"h\",\"result\":\"PENDING\"}"
+                            "raw": "{\"type\":\"CASUAL_INTERVIEW\",\"scheduled_at\":\"2026-09-27T16:12:07\",\"location_or_url\":\"http:\\\/\\\/www.bailey.biz\\\/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html\",\"interviewer_info\":\"i\",\"prep_memo\":\"k\",\"review_memo\":\"h\",\"result\":\"PENDING\"}"
                         },
                         "description": ""
                     },

@@ -6,6 +6,7 @@ use App\Domain\Company\Entities\Company;
 use App\Domain\Company\Repositories\CompanyRepositoryInterface;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;

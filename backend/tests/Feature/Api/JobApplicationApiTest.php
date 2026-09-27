@@ -15,11 +15,10 @@ use App\Domain\JobApplication\ValueObjects\StepType;
 use App\Models\User;
 use DateTimeImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-
-
 
 uses(RefreshDatabase::class);
 
@@ -263,7 +262,6 @@ test('DELETE /api/job-applications/{id} で求人を削除でき、子要素(ste
         'id' => $company->id,
     ]);
 });
-
 
 test('POST /api/job-applications/{id}/advance-status で正常なステータス進行ができ、履歴が記録されること', function () {
     $user = User::factory()->create();

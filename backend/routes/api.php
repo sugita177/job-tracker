@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\SelectionStepController;
@@ -13,7 +14,20 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// --- 認証エンドポイント (Public) ---
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+});
+
 Route::middleware('auth:sanctum')->group(function () {
+    // 認証情報・ログアウト
+    Route::prefix('auth')->group(function () {
+        Route::get('user', [AuthController::class, 'user']);
+        Route::post('logout', [AuthController::class, 'logout']);
+    });
+
+    // 企業管理
     Route::apiResource('companies', CompanyController::class);
 
     // Job Applications

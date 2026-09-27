@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $to_status
  * @property string $type
  * @property string|null $reason
- * @property \DateTimeImmutable|\Carbon\CarbonImmutable $changed_at
+ * @property \DateTimeImmutable|CarbonImmutable $changed_at
  */
 final class StatusHistoryModel extends Model
 {

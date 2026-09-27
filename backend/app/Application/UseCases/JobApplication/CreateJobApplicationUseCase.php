@@ -53,7 +53,7 @@ final readonly class CreateJobApplicationUseCase
                 title: $input->title,
                 priority: $priority,
                 channel: $channel,
-                appliedAt: $input->appliedAt ?? new DateTimeImmutable(),
+                appliedAt: $input->appliedAt ?? new DateTimeImmutable,
                 jobUrl: $input->jobUrl,
                 notes: $input->notes,
             );

@@ -6,11 +6,11 @@ namespace App\Application\UseCases\JobApplication;
 
 use App\Application\UseCases\JobApplication\Dto\AdvanceStatusInput;
 use App\Domain\JobApplication\Entities\JobApplication;
+use App\Domain\JobApplication\Exceptions\IncompleteApplicationException;
 use App\Domain\JobApplication\Repositories\JobApplicationRepositoryInterface;
 use App\Domain\JobApplication\ValueObjects\ApplicationChannel;
 use App\Domain\JobApplication\ValueObjects\ApplicationStatus;
 use App\Domain\JobApplication\ValueObjects\ChannelType;
-use App\Domain\JobApplication\Exceptions\IncompleteApplicationException;
 use DateTimeImmutable;
 
 final readonly class AdvanceApplicationStatusUseCase
@@ -38,7 +38,7 @@ final readonly class AdvanceApplicationStatusUseCase
                 throw IncompleteApplicationException::missingChannelOrAppliedAt();
             }
 
-            $application->apply($channel, $input->appliedAt ?? new DateTimeImmutable());
+            $application->apply($channel, $input->appliedAt ?? new DateTimeImmutable);
         } else {
             $application->advanceStatus($nextStatus, $input->appliedAt);
         }
